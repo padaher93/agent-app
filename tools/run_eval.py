@@ -24,6 +24,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--dataset-version", default="dataset_pilot_v0.1")
     parser.add_argument("--pipeline-version", default="local")
     parser.add_argument("--failure-taxonomy-file")
+    parser.add_argument("--required-streak", type=int, default=3)
     return parser.parse_args()
 
 
@@ -67,7 +68,7 @@ def main() -> int:
     write_json(history_file, report)
 
     streak = consecutive_passes(history_dir)
-    release_ready = report["gate_pass"] and streak >= 3
+    release_ready = report["gate_pass"] and streak >= args.required_streak
 
     print("Evaluation complete")
     print(f"Report: {args.output_report}")
@@ -75,7 +76,7 @@ def main() -> int:
     print(f"Metrics: {report['metrics']}")
     print(f"Gate pass this run: {report['gate_pass']}")
     print(f"Consecutive pass streak: {streak}")
-    print(f"Release ready (>=3 consecutive): {release_ready}")
+    print(f"Release ready (>={args.required_streak} consecutive): {release_ready}")
 
     return 0 if release_ready else 2
 

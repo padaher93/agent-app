@@ -1,0 +1,55 @@
+name: quality-gates
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e '.[dev]'
+
+      - name: Validate dataset contracts
+        run: |
+          python tools/validate_dataset.py --packages-dir dataset/packages/proxy_v1_full --labels-dir dataset/labels/proxy_v1_full
+
+      - name: Validate labeling workflow
+        run: |
+          python tools/check_labeling_quality.py --packages-dir dataset/packages/proxy_v1_full --labels-dir dataset/labels/proxy_v1_full
+
+      - name: Build extraction baseline predictions
+        run: |
+          mkdir -p dataset/predictions
+          python tools/run_extraction_baseline.py \
+            --packages-dir dataset/packages/proxy_v1_full \
+            --labels-dir dataset/labels/proxy_v1_full \
+            --output-file dataset/predictions/ci_predictions.json
+
+      - name: Evaluate quality gates
+        run: |
+          mkdir -p dataset/eval/reports dataset/eval/history
+          python tools/run_eval.py \
+            --ground-truth-dir dataset/labels/proxy_v1_full \
+            --predictions-file dataset/predictions/ci_predictions.json \
+            --output-report dataset/eval/reports/ci_latest.json \
+            --history-dir dataset/eval/history \
+            --dataset-version dataset_v1.0 \
+            --pipeline-version ci \
+            --required-streak 1
+
+      - name: Run tests
+        run: |
+          pytest -q
