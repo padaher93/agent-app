@@ -69,18 +69,31 @@ python tools/freeze_dataset.py \
 7. Run evaluation and gate streak:
 
 ```bash
-python tools/generate_sample_predictions.py \
-  --ground-truth-dir dataset/labels/proxy_v1_full \
-  --output-file dataset/predictions/sample_predictions.json \
-  --error-rate 0.0
+python tools/run_extraction_baseline.py \
+  --packages-dir dataset/packages/proxy_v1_full \
+  --labels-dir dataset/labels/proxy_v1_full \
+  --output-file dataset/predictions/latest_predictions.json
 
 python tools/run_eval.py \
   --ground-truth-dir dataset/labels/proxy_v1_full \
-  --predictions-file dataset/predictions/sample_predictions.json \
+  --predictions-file dataset/predictions/latest_predictions.json \
   --output-report dataset/eval/reports/latest.json \
   --history-dir dataset/eval/history \
   --dataset-version dataset_v1.0 \
-  --pipeline-version local
+  --pipeline-version local \
+  --required-streak 3
+```
+
+Phase 2 workflow run (append-only `trace_id` event log):
+
+```bash
+python tools/run_agent_workflow.py \
+  --packages-dir dataset/packages/proxy_v1_full \
+  --labels-dir dataset/labels/proxy_v1_full \
+  --output-file dataset/predictions/workflow_predictions.json \
+  --events-log dataset/eval/agent_events.jsonl \
+  --max-retries 2 \
+  --truncate-log
 ```
 
 8. Generate design-partner trust artifact:

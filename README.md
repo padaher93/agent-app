@@ -49,11 +49,27 @@ python tools/generate_stress_variants.py \
 Run evaluation (requires predictions file):
 
 ```bash
+python tools/run_extraction_baseline.py \
+  --packages-dir dataset/packages/proxy_v1_full \
+  --labels-dir dataset/labels/proxy_v1_full \
+  --output-file dataset/predictions/latest_predictions.json
+
 python tools/run_eval.py \
-  --ground-truth-dir dataset/labels/pilot \
-  --predictions-file dataset/predictions/sample_predictions.json \
+  --ground-truth-dir dataset/labels/proxy_v1_full \
+  --predictions-file dataset/predictions/latest_predictions.json \
   --output-report dataset/eval/reports/latest.json \
   --history-dir dataset/eval/history
+```
+
+Run deterministic agent workflow (Phase 2 scaffold):
+
+```bash
+python tools/run_agent_workflow.py \
+  --packages-dir dataset/packages/proxy_v1_full \
+  --labels-dir dataset/labels/proxy_v1_full \
+  --output-file dataset/predictions/workflow_predictions.json \
+  --events-log dataset/eval/agent_events.jsonl \
+  --truncate-log
 ```
 
 Generate trust artifact:
