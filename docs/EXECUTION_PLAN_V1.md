@@ -3,7 +3,7 @@
 Version: 1.0  
 Date: 2026-03-06  
 Owner: Product + Engineering  
-Status: Active (Phase 1 implemented, Phase 2 completed, Phase 3 implemented, Phase 4 implemented)
+Status: Active (Phases 1-4 implemented; charter gap-closure hardening implemented)
 
 ## Summary
 Execute V1 in four build phases after the dataset foundation.
@@ -26,6 +26,9 @@ Scope remains locked to:
 8. Phase 3 internal API + email adapter implemented with async lifecycle and idempotent ingest.
 9. Phase 4 desktop tri-panel shell implemented with trace-anchored evidence/log views and user-resolution flow.
 10. Design-partner readiness bundle tooling implemented for launch-by-metric operations.
+11. Runtime extraction path decoupled from label files (eval mode retained for harness only).
+12. Delta API now returns baseline/delta semantics (`prior/current/abs/pct`) and `period_revision`.
+13. Role-gated resolution, evidence preview endpoint, retention tooling, inbound gateway, and isolated `real_shadow_test` partition implemented.
 
 ## Phase Plan
 

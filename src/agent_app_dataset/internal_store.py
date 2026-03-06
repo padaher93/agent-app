@@ -7,6 +7,8 @@ import sqlite3
 from pathlib import Path
 from typing import Any
 
+from .constants import CONCEPT_LABELS
+
 
 PACKAGE_STATUSES = ("received", "processing", "completed", "needs_review", "failed")
 
@@ -20,6 +22,7 @@ class PackageRecord:
     deal_id: str
     period_end_date: str
     received_at: str
+    period_revision: int
     status: str
     package_manifest: dict[str, Any]
     processed_payload: dict[str, Any] | None
@@ -51,6 +54,7 @@ class InternalStore:
                     deal_id TEXT NOT NULL,
                     period_end_date TEXT NOT NULL,
                     received_at TEXT NOT NULL,
+                    period_revision INTEGER NOT NULL DEFAULT 1,
                     status TEXT NOT NULL,
                     package_manifest_json TEXT NOT NULL,
                     processed_payload_json TEXT,
@@ -74,7 +78,46 @@ class InternalStore:
                 """
             )
             conn.execute("CREATE INDEX IF NOT EXISTS idx_packages_deal_period ON packages(deal_id, period_end_date)")
+            conn.execute(
+                "CREATE INDEX IF NOT EXISTS idx_packages_period_revision ON packages(deal_id, period_end_date, period_revision)"
+            )
             conn.execute("CREATE INDEX IF NOT EXISTS idx_traces_package ON traces(package_id)")
+
+            package_columns = {
+                row["name"]
+                for row in conn.execute("PRAGMA table_info(packages)").fetchall()
+            }
+            if "period_revision" not in package_columns:
+                conn.execute(
+                    "ALTER TABLE packages ADD COLUMN period_revision INTEGER NOT NULL DEFAULT 1"
+                )
+
+    @staticmethod
+    def _as_float(value: Any) -> float | None:
+        if isinstance(value, (int, float)):
+            return float(value)
+        if isinstance(value, str):
+            text = value.strip()
+            if not text or text.upper() == "N/A":
+                return None
+            try:
+                return float(text.replace(",", ""))
+            except ValueError:
+                return None
+        return None
+
+    def _next_period_revision(self, deal_id: str, period_end_date: str) -> int:
+        with self._connect() as conn:
+            row = conn.execute(
+                """
+                SELECT MAX(period_revision) AS max_revision
+                FROM packages
+                WHERE deal_id = ? AND period_end_date = ?
+                """,
+                (deal_id, period_end_date),
+            ).fetchone()
+        max_revision = row["max_revision"] if row and row["max_revision"] is not None else 0
+        return int(max_revision) + 1
 
     def upsert_package(
         self,
@@ -92,6 +135,7 @@ class InternalStore:
         if existing:
             return existing, False
 
+        period_revision = self._next_period_revision(deal_id=deal_id, period_end_date=period_end_date)
         now = datetime.now(timezone.utc).isoformat()
         with self._connect() as conn:
             conn.execute(
@@ -104,13 +148,14 @@ class InternalStore:
                     deal_id,
                     period_end_date,
                     received_at,
+                    period_revision,
                     status,
                     package_manifest_json,
                     processed_payload_json,
                     error_message,
                     created_at,
                     updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, ?, ?)
                 """,
                 (
                     package_id,
@@ -120,6 +165,7 @@ class InternalStore:
                     deal_id,
                     period_end_date,
                     received_at,
+                    period_revision,
                     status,
                     json.dumps(package_manifest, sort_keys=True),
                     now,
@@ -153,7 +199,7 @@ class InternalStore:
             rows = conn.execute(
                 """
                 SELECT * FROM packages
-                ORDER BY deal_id ASC, period_end_date DESC, created_at DESC
+                ORDER BY deal_id ASC, period_end_date DESC, period_revision DESC, created_at DESC
                 """
             ).fetchall()
         records: list[PackageRecord] = []
@@ -241,6 +287,9 @@ class InternalStore:
                 "deal_id": deal_id,
                 "period_id": period_id,
                 "status": package.status,
+                "period_revision": package.period_revision,
+                "prior_period_id": None,
+                "is_baseline": True,
                 "rows": [],
             }
 
@@ -251,11 +300,92 @@ class InternalStore:
                 package_rows = item.get("rows", [])
                 break
 
+        deal_packages = [
+            pkg for pkg in self.list_packages()
+            if pkg.deal_id == deal_id and pkg.processed_payload is not None
+        ]
+        deal_packages_sorted = sorted(
+            deal_packages,
+            key=lambda item: (item.period_end_date, item.period_revision, item.received_at),
+        )
+
+        current_idx = -1
+        for idx, item in enumerate(deal_packages_sorted):
+            if item.package_id == period_id:
+                current_idx = idx
+                break
+
+        prior_rows_by_concept: dict[str, dict[str, Any]] = {}
+        prior_period_id: str | None = None
+        if current_idx > 0:
+            prior_package = deal_packages_sorted[current_idx - 1]
+            prior_period_id = prior_package.package_id
+            for prior_item in prior_package.processed_payload.get("packages", []):
+                if prior_item.get("package_id") != prior_package.package_id:
+                    continue
+                for row in prior_item.get("rows", []):
+                    prior_rows_by_concept[str(row.get("concept_id", ""))] = row
+                break
+
+        enriched_rows: list[dict[str, Any]] = []
+        for row in package_rows:
+            item = dict(row)
+            concept_id = str(item.get("concept_id", ""))
+
+            current_value = item.get("current_value", item.get("normalized_value"))
+            prior_row = prior_rows_by_concept.get(concept_id)
+            prior_value = (
+                prior_row.get("current_value", prior_row.get("normalized_value"))
+                if prior_row is not None
+                else None
+            )
+
+            current_num = self._as_float(current_value)
+            prior_num = self._as_float(prior_value)
+
+            if prior_num is None:
+                prior_output: float | str = "N/A"
+                abs_delta: float | str = "N/A"
+                pct_delta: float | str = "N/A"
+            else:
+                prior_output = prior_num
+                if current_num is None:
+                    abs_delta = "N/A"
+                    pct_delta = "N/A"
+                else:
+                    abs_delta = round(current_num - prior_num, 4)
+                    if prior_num == 0:
+                        pct_delta = "N/A"
+                    else:
+                        pct_delta = round(((current_num - prior_num) / abs(prior_num)) * 100.0, 4)
+
+            evidence = item.get("evidence", {})
+            item["label"] = item.get("label", CONCEPT_LABELS.get(concept_id, concept_id))
+            item["prior_value"] = prior_output
+            item["current_value"] = current_value
+            item["abs_delta"] = abs_delta
+            item["pct_delta"] = pct_delta
+            item["dictionary_version"] = item.get("dictionary_version", "v1.0")
+            item["evidence_link"] = item.get(
+                "evidence_link",
+                {
+                    "doc_id": evidence.get("doc_id", ""),
+                    "doc_name": evidence.get("doc_name", ""),
+                    "page_or_sheet": evidence.get("page_or_sheet", ""),
+                    "locator_type": evidence.get("locator_type", "paragraph"),
+                    "locator_value": evidence.get("locator_value", ""),
+                },
+            )
+            enriched_rows.append(item)
+
         return {
             "deal_id": deal_id,
             "period_id": period_id,
             "status": package.status,
-            "rows": package_rows,
+            "period_revision": package.period_revision,
+            "prior_period_id": prior_period_id,
+            "is_baseline": prior_period_id is None,
+            "rows": enriched_rows,
         }
 
     def get_trace(self, trace_id: str) -> dict[str, Any] | None:
@@ -301,6 +431,7 @@ class InternalStore:
             deal_id=row["deal_id"],
             period_end_date=row["period_end_date"],
             received_at=row["received_at"],
+            period_revision=int(row["period_revision"]) if row["period_revision"] is not None else 1,
             status=row["status"],
             package_manifest=json.loads(row["package_manifest_json"]),
             processed_payload=(

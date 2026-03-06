@@ -96,6 +96,34 @@
       },
       "additionalProperties": false
     },
+    "per_concept_verified_precision": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      }
+    },
+    "regressions": {
+      "type": "object",
+      "required": [
+        "verified_precision_delta",
+        "evidence_link_accuracy_delta",
+        "blocked"
+      ],
+      "properties": {
+        "verified_precision_delta": {
+          "type": "number"
+        },
+        "evidence_link_accuracy_delta": {
+          "type": "number"
+        },
+        "blocked": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
     "failure_taxonomy": {
       "type": "array",
       "items": {

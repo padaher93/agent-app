@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from .constants import STARTER_CONCEPT_IDS
+from .constants import CONCEPT_LABELS, STARTER_CONCEPT_IDS
 from .io_utils import read_json, write_json
 from .normalization import normalize_value
 from .policy import classify_status
@@ -47,6 +48,12 @@ def extract_package_predictions(
     label_payload: dict[str, Any] | None,
 ) -> dict[str, Any]:
     labels_by_concept = _label_index(label_payload.get("rows", [])) if label_payload else {}
+    dictionary_version = (
+        str(label_payload.get("dictionary_version", "v1.0"))
+        if label_payload is not None
+        else "v1.0"
+    )
+    extracted_at = datetime.now(timezone.utc).isoformat()
 
     rows: list[dict[str, Any]] = []
     for concept_id in STARTER_CONCEPT_IDS:
@@ -56,16 +63,37 @@ def extract_package_predictions(
             rows.append(
                 {
                     "concept_id": concept_id,
+                    "label": CONCEPT_LABELS[concept_id],
                     "status": "unresolved",
+                    "dictionary_version": dictionary_version,
+                    "raw_value_text": "",
                     "normalized_value": None,
+                    "current_value": None,
                     "unit_currency": "USD",
                     "confidence": 0.0,
                     "hard_blockers": ["missing_label_evidence"],
                     "trace_id": f"tr_{package_payload['package_id']}_{concept_id}_missing",
-                    "evidence": {
+                    "evidence_link": {
                         "doc_id": "",
+                        "doc_name": "",
+                        "page_or_sheet": "",
                         "locator_type": "paragraph",
                         "locator_value": "",
+                    },
+                    "evidence": {
+                        "doc_id": "",
+                        "doc_name": "",
+                        "page_or_sheet": "",
+                        "locator_type": "paragraph",
+                        "locator_value": "",
+                        "source_snippet": "",
+                        "raw_value_text": "",
+                        "normalized_value": None,
+                        "unit_currency": "USD",
+                        "extractor_agent_id": "agent_3",
+                        "verifier_agent_id": "agent_4",
+                        "trace_id": f"tr_{package_payload['package_id']}_{concept_id}_missing",
+                        "extracted_at": extracted_at,
                     },
                 }
             )
@@ -88,16 +116,37 @@ def extract_package_predictions(
         rows.append(
             {
                 "concept_id": concept_id,
+                "label": CONCEPT_LABELS[concept_id],
                 "status": status,
+                "dictionary_version": dictionary_version,
+                "raw_value_text": raw_value_text,
                 "normalized_value": normalization.normalized_value,
+                "current_value": normalization.normalized_value,
                 "unit_currency": normalization.unit_currency,
                 "confidence": round(confidence, 4),
                 "hard_blockers": blockers,
                 "trace_id": label_row.get("trace_id", f"tr_{package_payload['package_id']}_{concept_id}"),
-                "evidence": {
+                "evidence_link": {
                     "doc_id": evidence.get("doc_id", ""),
+                    "doc_name": evidence.get("doc_name", ""),
+                    "page_or_sheet": evidence.get("page_or_sheet", ""),
                     "locator_type": evidence.get("locator_type", "paragraph"),
                     "locator_value": evidence.get("locator_value", ""),
+                },
+                "evidence": {
+                    "doc_id": evidence.get("doc_id", ""),
+                    "doc_name": evidence.get("doc_name", ""),
+                    "page_or_sheet": evidence.get("page_or_sheet", ""),
+                    "locator_type": evidence.get("locator_type", "paragraph"),
+                    "locator_value": evidence.get("locator_value", ""),
+                    "source_snippet": evidence.get("source_snippet", ""),
+                    "raw_value_text": raw_value_text,
+                    "normalized_value": normalization.normalized_value,
+                    "unit_currency": normalization.unit_currency,
+                    "extractor_agent_id": "agent_3",
+                    "verifier_agent_id": "agent_4",
+                    "trace_id": label_row.get("trace_id", f"tr_{package_payload['package_id']}_{concept_id}"),
+                    "extracted_at": extracted_at,
                 },
             }
         )

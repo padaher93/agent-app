@@ -105,6 +105,10 @@ python tools/run_internal_api.py \
   --ui-dir src/agent_app_dataset/ui
 ```
 
+`/internal/v1/packages/{package_id}:process` supports:
+- `extraction_mode=runtime` (default): file-driven extraction from PDF/XLSX evidence
+- `extraction_mode=eval`: ground-truth-assisted mode for harness/regression testing
+
 Desktop shell URL after startup:
 
 ```text
@@ -117,6 +121,37 @@ Email adapter ingest to internal API:
 python tools/email_adapter_ingest.py \
   --email-json dataset/examples/inbound_email.sample.json \
   --endpoint http://127.0.0.1:8080/internal/v1/packages:ingest
+```
+
+Run inbound gateway (provider/webhook-facing):
+
+```bash
+python tools/run_inbound_gateway.py \
+  --host 127.0.0.1 \
+  --port 8090 \
+  --internal-api-base http://127.0.0.1:8080 \
+  --inbound-token your_shared_secret
+```
+
+Apply retention policy (default dry-run):
+
+```bash
+python tools/apply_retention.py \
+  --db-path runtime/internal_api.sqlite3 \
+  --events-log runtime/agent_events.jsonl
+
+python tools/apply_retention.py \
+  --db-path runtime/internal_api.sqlite3 \
+  --events-log runtime/agent_events.jsonl \
+  --apply
+```
+
+Sync isolated `real_shadow_test` partition (default dry-run):
+
+```bash
+python tools/sync_real_shadow_partition.py \
+  --source-packages-dir /path/to/redacted/packages \
+  --source-labels-dir /path/to/redacted/labels
 ```
 
 ## Repo policy for source files

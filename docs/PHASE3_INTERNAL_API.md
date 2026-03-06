@@ -13,20 +13,40 @@ Expose internal processing interfaces for package ingest, async processing, delt
 - Duplicate behavior: same idempotency key returns existing package (`created=false`)
 
 2. `POST /internal/v1/packages/{package_id}:process`
-- Input: `async_mode`, `max_retries`
+- Input: `async_mode`, `max_retries`, `extraction_mode` (`runtime` default, `eval` optional)
 - Behavior: transitions package to `processing`, runs extraction + workflow, stores deltas/traces
 - Output lifecycle: `completed` or `needs_review` (or `failed` on exception)
 
 3. `GET /internal/v1/packages/{package_id}`
-- Returns package metadata and current lifecycle status.
+- Returns package metadata, `period_revision`, and current lifecycle status.
+- Supports `include_manifest=true` and `include_processed_payload=true`.
 
 4. `GET /internal/v1/deals/{deal_id}/periods/{period_id}/delta`
-- Returns processed rows for the requested period/package.
+- Returns enriched Delta Page rows (`prior/current/abs/pct`) with baseline semantics.
 
 5. `GET /internal/v1/traces/{trace_id}`
 - Returns the trace row and associated package/deal context.
 
-6. `GET /internal/v1/health`
+6. `GET /internal/v1/traces/{trace_id}/events`
+- Returns append-only events filtered by `trace_id`.
+
+7. `GET /internal/v1/traces/{trace_id}/evidence`
+- Returns evidence preview payload for document viewer (`xlsx_grid` or `pdf_text` when available).
+
+8. `POST /internal/v1/traces/{trace_id}:resolve`
+- Resolves row to `verified`.
+- Requires `X-Role: Owner|Operator` (Viewer is forbidden).
+
+9. `GET /internal/v1/packages/{package_id}/events`
+- Returns append-only events filtered by package.
+
+10. `GET /internal/v1/deals`
+- Returns deal list with periods.
+
+11. `GET /internal/v1/deals/{deal_id}/periods`
+- Returns periods for selected deal.
+
+12. `GET /internal/v1/health`
 - Internal health signal for runtime wiring.
 
 ## Lifecycle statuses
@@ -46,6 +66,7 @@ Key is derived from:
 SQLite runtime store (`runtime/internal_api.sqlite3` by default):
 1. `packages` table for ingest/process metadata
 2. `traces` table for row-level trace lookup
+3. `period_revision` tracked per `(deal_id, period_end_date)` for same-period restatements.
 
 ## Email adapter
 Use `tools/email_adapter_ingest.py` to convert normalized email payloads into ingest calls.

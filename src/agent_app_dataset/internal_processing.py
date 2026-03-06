@@ -4,9 +4,10 @@ from pathlib import Path
 from typing import Any
 
 from .agent_workflow import WorkflowConfig, run_workflow
-from .constants import STARTER_CONCEPT_IDS
+from .constants import CONCEPT_LABELS, STARTER_CONCEPT_IDS
 from .extractor_baseline import extract_package_predictions
 from .io_utils import read_json
+from .runtime_extractor import runtime_extract_package_predictions
 
 
 def _build_fallback_prediction(package_manifest: dict[str, Any]) -> dict[str, Any]:
@@ -18,16 +19,37 @@ def _build_fallback_prediction(package_manifest: dict[str, Any]) -> dict[str, An
         rows.append(
             {
                 "concept_id": concept_id,
+                "label": CONCEPT_LABELS[concept_id],
                 "status": "unresolved",
+                "dictionary_version": "v1.0",
+                "raw_value_text": "",
                 "normalized_value": None,
+                "current_value": None,
                 "unit_currency": "USD",
                 "confidence": 0.0,
                 "hard_blockers": ["missing_label_evidence"],
                 "trace_id": f"tr_{package_manifest['package_id']}_{concept_id}_fallback",
-                "evidence": {
+                "evidence_link": {
                     "doc_id": first_file.get("file_id", ""),
+                    "doc_name": first_file.get("filename", ""),
+                    "page_or_sheet": "",
                     "locator_type": "paragraph",
                     "locator_value": "",
+                },
+                "evidence": {
+                    "doc_id": first_file.get("file_id", ""),
+                    "doc_name": first_file.get("filename", ""),
+                    "page_or_sheet": "",
+                    "locator_type": "paragraph",
+                    "locator_value": "",
+                    "source_snippet": "",
+                    "raw_value_text": "",
+                    "normalized_value": None,
+                    "unit_currency": "USD",
+                    "extractor_agent_id": "agent_3",
+                    "verifier_agent_id": "agent_4",
+                    "trace_id": f"tr_{package_manifest['package_id']}_{concept_id}_fallback",
+                    "extracted_at": package_manifest.get("received_at", ""),
                 },
             }
         )
@@ -42,17 +64,24 @@ def _build_fallback_prediction(package_manifest: dict[str, Any]) -> dict[str, An
 
 def process_package_manifest(
     package_manifest: dict[str, Any],
-    labels_dir: Path,
+    labels_dir: Path | None,
     events_log_path: Path,
     max_retries: int = 2,
+    extraction_mode: str = "runtime",
 ) -> tuple[dict[str, Any], dict[str, Any]]:
-    label_file = labels_dir / f"{package_manifest['package_id']}.ground_truth.json"
+    if extraction_mode not in {"runtime", "eval"}:
+        raise ValueError(f"Unsupported extraction_mode: {extraction_mode}")
 
-    if label_file.exists():
-        label_payload = read_json(label_file)
-        base_prediction = extract_package_predictions(package_manifest, label_payload)
+    base_prediction: dict[str, Any]
+    if extraction_mode == "runtime":
+        base_prediction = runtime_extract_package_predictions(package_manifest)
     else:
-        base_prediction = _build_fallback_prediction(package_manifest)
+        label_file = (labels_dir / f"{package_manifest['package_id']}.ground_truth.json") if labels_dir else None
+        if label_file is not None and label_file.exists():
+            label_payload = read_json(label_file)
+            base_prediction = extract_package_predictions(package_manifest, label_payload)
+        else:
+            base_prediction = _build_fallback_prediction(package_manifest)
 
     workflow_payload, summary = run_workflow(
         package_predictions=[base_prediction],

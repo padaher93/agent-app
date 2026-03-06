@@ -44,9 +44,15 @@ def main() -> int:
     history_dir = Path(args.history_dir)
     history_dir.mkdir(parents=True, exist_ok=True)
 
+    previous_report = None
+    history_reports = sorted(history_dir.glob("*.json"))
+    if history_reports:
+        previous_report = read_json(history_reports[-1])
+
     result = evaluate(
         ground_truth_dir=Path(args.ground_truth_dir),
         predictions_file=Path(args.predictions_file),
+        previous_report=previous_report,
     )
 
     report = write_eval_report(
@@ -75,6 +81,8 @@ def main() -> int:
     print(f"History: {history_file}")
     print(f"Metrics: {report['metrics']}")
     print(f"Gate pass this run: {report['gate_pass']}")
+    if "regressions" in report:
+        print(f"Regressions: {report['regressions']}")
     print(f"Consecutive pass streak: {streak}")
     print(f"Release ready (>={args.required_streak} consecutive): {release_ready}")
 

@@ -18,6 +18,7 @@ Deliver the desktop tri-panel review shell for evidence-backed delta operations.
 6. Row selection behavior:
    - selecting a row anchors evidence + logs to that `trace_id`
    - logs support jump-to-trace behavior
+   - evidence preview uses `GET /internal/v1/traces/{trace_id}/evidence`
 7. User resolution flow:
    - `candidate_flagged` and `unresolved` rows expose candidate evidence options
    - selecting a candidate calls `POST /internal/v1/traces/{trace_id}:resolve`
@@ -35,3 +36,4 @@ Deliver the desktop tri-panel review shell for evidence-backed delta operations.
 1. This is desktop-first only for V1.
 2. Evidence rendering is trace-anchored and deterministic from stored locators.
 3. Materiality ordering uses the locked weighted formula with deterministic tie-breakers.
+4. Viewer supports document-backed previews when source files are locally available via `storage_uri`.

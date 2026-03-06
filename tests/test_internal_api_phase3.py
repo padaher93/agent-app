@@ -124,7 +124,7 @@ def test_process_sync_and_query_delta_and_trace(tmp_path: Path) -> None:
 
     process_resp = client.post(
         f"/internal/v1/packages/{package_id}:process",
-        json={"async_mode": False, "max_retries": 2},
+        json={"async_mode": False, "max_retries": 2, "extraction_mode": "eval"},
     )
     assert process_resp.status_code == 200
     assert process_resp.json()["status"] == "completed"
@@ -157,7 +157,7 @@ def test_async_process_status_lifecycle(tmp_path: Path) -> None:
 
     accepted = client.post(
         f"/internal/v1/packages/{package_id}:process",
-        json={"async_mode": True, "max_retries": 2},
+        json={"async_mode": True, "max_retries": 2, "extraction_mode": "eval"},
     )
     assert accepted.status_code == 200
     assert accepted.json()["status"] == "processing"

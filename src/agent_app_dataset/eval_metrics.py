@@ -15,6 +15,8 @@ class EvalResult:
     gate_pass: bool
     failures: list[str]
     row_counts: dict[str, int]
+    per_concept_verified_precision: dict[str, float]
+    regressions: dict[str, float | bool]
 
 
 def _index_ground_truth(ground_truth_dir: Path) -> dict[tuple[str, str], dict[str, Any]]:
@@ -47,6 +49,7 @@ def evaluate(
     ground_truth_dir: Path,
     predictions_file: Path,
     thresholds: dict[str, float] | None = None,
+    previous_report: dict[str, Any] | None = None,
 ) -> EvalResult:
     limits = thresholds or QUALITY_THRESHOLDS
 
@@ -64,6 +67,8 @@ def evaluate(
 
     package_expected: dict[str, int] = {}
     package_present: dict[str, set[str]] = {}
+    concept_verified_rows: dict[str, int] = {}
+    concept_verified_correct: dict[str, int] = {}
 
     for (package_id, concept_id), gt_row in gt.items():
         package_expected[package_id] = package_expected.get(package_id, 0) + 1
@@ -94,9 +99,11 @@ def evaluate(
 
         if status == "verified":
             verified_rows += 1
+            concept_verified_rows[concept_id] = concept_verified_rows.get(concept_id, 0) + 1
             value_match = prediction.get("normalized_value") == gt_row.get("normalized_value")
             if value_match:
                 verified_correct += 1
+                concept_verified_correct[concept_id] = concept_verified_correct.get(concept_id, 0) + 1
             else:
                 false_verified += 1
 
@@ -125,6 +132,35 @@ def evaluate(
     if metrics["package_completion_rate"] < limits["package_completion_rate_min"]:
         failures.append("package_completion_rate")
 
+    per_concept_verified_precision: dict[str, float] = {}
+    for concept_id, rows_count in concept_verified_rows.items():
+        precision = _safe_ratio(concept_verified_correct.get(concept_id, 0), rows_count)
+        per_concept_verified_precision[concept_id] = precision
+        if precision < 0.95:
+            failures.append(f"critical_concept_precision:{concept_id}")
+
+    regressions: dict[str, float | bool] = {
+        "verified_precision_delta": 0.0,
+        "evidence_link_accuracy_delta": 0.0,
+        "blocked": False,
+    }
+    if previous_report:
+        prev_metrics = previous_report.get("metrics", {})
+        prev_verified = float(prev_metrics.get("verified_precision", metrics["verified_precision"]))
+        prev_evidence = float(prev_metrics.get("evidence_link_accuracy", metrics["evidence_link_accuracy"]))
+
+        vp_delta = metrics["verified_precision"] - prev_verified
+        ea_delta = metrics["evidence_link_accuracy"] - prev_evidence
+        regressions["verified_precision_delta"] = round(vp_delta, 6)
+        regressions["evidence_link_accuracy_delta"] = round(ea_delta, 6)
+
+        if vp_delta < -0.01:
+            failures.append("verified_precision_regression")
+            regressions["blocked"] = True
+        if ea_delta < -0.01:
+            failures.append("evidence_link_accuracy_regression")
+            regressions["blocked"] = True
+
     return EvalResult(
         metrics=metrics,
         gate_pass=(len(failures) == 0),
@@ -135,6 +171,8 @@ def evaluate(
             "evidence_rows": evidence_total,
             "packages": len(package_expected),
         },
+        per_concept_verified_precision=per_concept_verified_precision,
+        regressions=regressions,
     )
 
 
@@ -154,6 +192,8 @@ def write_eval_report(
         "failures": result.failures,
         "row_counts": result.row_counts,
         "failure_taxonomy": failure_taxonomy or [],
+        "per_concept_verified_precision": result.per_concept_verified_precision,
+        "regressions": result.regressions,
     }
     write_json(output_report, report)
     return report

@@ -31,6 +31,14 @@ Rules:
 | 2026-03-06 | D-0020 | Right-panel logs jump to exact decision event for selected cell. | Locked | Product | `trace_id` anchored UX |
 | 2026-03-06 | D-0021 | Scope freeze rule: no new scope before launch quality gates are met. | Locked | Product | Execution discipline |
 | 2026-03-06 | D-0022 | Interim dataset strategy is proxy/public and synthetic first, then design-partner real data. | Locked | Product | Solves chicken-and-egg |
+| 2026-03-06 | D-0023 | Internal runtime processing defaults to file-driven extraction; label-assisted extraction is eval-only. | Locked | Product + Applied AI | Removes label dependency from runtime path |
+| 2026-03-06 | D-0024 | Same deal + same period with changed content creates incrementing `period_revision`. | Locked | Platform | Immutable correction history |
+| 2026-03-06 | D-0025 | Row resolution requires `Owner` or `Operator` role; `Viewer` is read-only. | Locked | Product + Platform | RBAC enforcement for write actions |
+| 2026-03-06 | D-0026 | Trace evidence endpoint must return document-backed preview payload (XLSX/PDF) when source is available. | Locked | Product + Frontend | Evidence viewer contract |
+| 2026-03-06 | D-0027 | Retention policy is executable tooling: packages 24 months, logs 7 years (with archive on prune). | Locked | Product + Platform | Charter retention operationalized |
+| 2026-03-06 | D-0028 | Real borrower shadow data is isolated under dedicated `real_shadow_test` partition and evaluated separately. | Locked | Product + Applied AI | Prevents proxy/real contamination |
+| 2026-03-06 | D-0029 | Inbound gateway endpoint is accepted ingress path for provider webhooks into internal ingest/process APIs. | Locked | Platform | Email-only ingestion path hardening |
+| 2026-03-06 | D-0030 | Quality gate evaluation enforces critical-concept precision floor and regression blocking rules. | Locked | Product + Applied AI | Completes V1 gate policy implementation |
 
 ## Proposed Defaults Pending Explicit Revision
 These defaults are active unless superseded by a newer decision row.

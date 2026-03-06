@@ -6,15 +6,16 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from .agent_workflow import append_events, check_log_integrity
+from .evidence_preview import build_evidence_preview
 from .idempotency import build_idempotency_key
 from .internal_processing import process_package_manifest
 from .internal_store import InternalStore
@@ -23,7 +24,7 @@ from .internal_store import InternalStore
 class PackageFileInput(BaseModel):
     file_id: str
     source_id: str
-    doc_type: str
+    doc_type: Literal["PDF", "XLSX"]
     filename: str
     storage_uri: str
     checksum: str
@@ -45,6 +46,7 @@ class PackageIngestRequest(BaseModel):
 class ProcessRequest(BaseModel):
     async_mode: bool = True
     max_retries: int = Field(default=2, ge=0, le=5)
+    extraction_mode: str = Field(default="runtime", pattern="^(runtime|eval)$")
 
 
 class ResolveTraceRequest(BaseModel):
@@ -88,6 +90,12 @@ def _derive_lifecycle_status_from_rows(rows: list[dict[str, Any]]) -> str:
     if "unresolved" in statuses or "candidate_flagged" in statuses:
         return "needs_review"
     return "completed"
+
+
+def _assert_role_can_resolve(role: str) -> None:
+    normalized = role.strip().lower()
+    if normalized not in {"owner", "operator"}:
+        raise HTTPException(status_code=403, detail="insufficient_role")
 
 
 def _read_events(
@@ -161,13 +169,14 @@ def create_app(
             "deal_id": record.deal_id,
             "period_end_date": record.period_end_date,
             "received_at": record.received_at,
+            "period_revision": record.period_revision,
             "status": record.status,
             "error_message": record.error_message,
             "created_at": record.created_at,
             "updated_at": record.updated_at,
         }
 
-    def _process(package_id: str, max_retries: int) -> None:
+    def _process(package_id: str, max_retries: int, extraction_mode: str) -> None:
         record = store.get_package(package_id)
         if not record:
             return
@@ -179,6 +188,7 @@ def create_app(
                 labels_dir=labels_dir,
                 events_log_path=events_log_path,
                 max_retries=max_retries,
+                extraction_mode=extraction_mode,
             )
             rows = payload["packages"][0]["rows"]
             store.upsert_traces(
@@ -243,7 +253,7 @@ def create_app(
         store.update_package_status(package_id, status="processing")
 
         if request.async_mode:
-            executor.submit(_process, package_id, request.max_retries)
+            executor.submit(_process, package_id, request.max_retries, request.extraction_mode)
             return {
                 "package_id": package_id,
                 "status": "processing",
@@ -251,7 +261,7 @@ def create_app(
                 "mode": "async",
             }
 
-        _process(package_id, request.max_retries)
+        _process(package_id, request.max_retries, request.extraction_mode)
         updated = store.get_package(package_id)
         if not updated:
             raise HTTPException(status_code=500, detail="package_lost")
@@ -299,6 +309,7 @@ def create_app(
                 {
                     "package_id": package.package_id,
                     "period_end_date": package.period_end_date,
+                    "period_revision": package.period_revision,
                     "status": package.status,
                     "received_at": package.received_at,
                 }
@@ -308,7 +319,7 @@ def create_app(
         for deal_id, periods in sorted(grouped.items(), key=lambda x: x[0]):
             periods_sorted = sorted(
                 periods,
-                key=lambda p: (p["period_end_date"], p["received_at"]),
+                key=lambda p: (p["period_end_date"], p.get("period_revision", 1), p["received_at"]),
                 reverse=True,
             )
             deals.append(
@@ -335,10 +346,15 @@ def create_app(
             {
                 "package_id": pkg.package_id,
                 "period_end_date": pkg.period_end_date,
+                "period_revision": pkg.period_revision,
                 "status": pkg.status,
                 "received_at": pkg.received_at,
             }
-            for pkg in sorted(packages, key=lambda p: (p.period_end_date, p.received_at), reverse=True)
+            for pkg in sorted(
+                packages,
+                key=lambda p: (p.period_end_date, p.period_revision, p.received_at),
+                reverse=True,
+            )
         ]
         return {
             "deal_id": deal_id,
@@ -360,6 +376,26 @@ def create_app(
             raise HTTPException(status_code=404, detail="trace_not_found")
         return trace
 
+    @app.get("/internal/v1/traces/{trace_id}/evidence")
+    def get_trace_evidence(trace_id: str) -> dict[str, Any]:
+        trace = store.get_trace(trace_id)
+        if trace is None:
+            raise HTTPException(status_code=404, detail="trace_not_found")
+
+        package = store.get_package(trace["package_id"])
+        if package is None:
+            raise HTTPException(status_code=404, detail="package_not_found")
+
+        return {
+            "trace_id": trace_id,
+            "package_id": package.package_id,
+            "deal_id": package.deal_id,
+            "evidence_preview": build_evidence_preview(
+                trace_row=trace.get("row", {}),
+                package_manifest=package.package_manifest,
+            ),
+        }
+
     @app.get("/internal/v1/traces/{trace_id}/events")
     def get_trace_events(trace_id: str, limit: int = Query(default=500, ge=1, le=5000)) -> dict[str, Any]:
         trace = store.get_trace(trace_id)
@@ -375,7 +411,12 @@ def create_app(
         }
 
     @app.post("/internal/v1/traces/{trace_id}:resolve")
-    def resolve_trace(trace_id: str, request: ResolveTraceRequest) -> dict[str, Any]:
+    def resolve_trace(
+        trace_id: str,
+        request: ResolveTraceRequest,
+        x_role: str = Header(default="Owner", alias="X-Role"),
+    ) -> dict[str, Any]:
+        _assert_role_can_resolve(x_role)
         trace = store.get_trace(trace_id)
         if trace is None:
             raise HTTPException(status_code=404, detail="trace_not_found")

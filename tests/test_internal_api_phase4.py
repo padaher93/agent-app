@@ -138,13 +138,13 @@ def test_phase4_deals_events_and_resolution(tmp_path: Path) -> None:
 
     baseline_process = client.post(
         f"/internal/v1/packages/{baseline_pkg}:process",
-        json={"async_mode": False, "max_retries": 2},
+        json={"async_mode": False, "max_retries": 2, "extraction_mode": "eval"},
     )
     assert baseline_process.status_code == 200
 
     followup_process = client.post(
         f"/internal/v1/packages/{followup_pkg}:process",
-        json={"async_mode": False, "max_retries": 0},
+        json={"async_mode": False, "max_retries": 0, "extraction_mode": "eval"},
     )
     assert followup_process.status_code == 200
     assert followup_process.json()["status"] == "needs_review"
@@ -181,9 +181,28 @@ def test_phase4_deals_events_and_resolution(tmp_path: Path) -> None:
     trace_events_before = client.get(f"/internal/v1/traces/{trace_id}/events")
     assert trace_events_before.status_code == 200
     before_count = trace_events_before.json()["count"]
+    trace_evidence = client.get(f"/internal/v1/traces/{trace_id}/evidence")
+    assert trace_evidence.status_code == 200
+    assert "evidence_preview" in trace_evidence.json()
+
+    forbidden = client.post(
+        f"/internal/v1/traces/{trace_id}:resolve",
+        headers={"X-Role": "Viewer"},
+        json={
+            "resolver": "viewer",
+            "selected_evidence": {
+                "doc_id": "file_phase4_01",
+                "locator_type": "cell",
+                "locator_value": "C12",
+            },
+            "note": "not allowed",
+        },
+    )
+    assert forbidden.status_code == 403
 
     resolve_resp = client.post(
         f"/internal/v1/traces/{trace_id}:resolve",
+        headers={"X-Role": "Operator"},
         json={
             "resolver": "operator",
             "selected_evidence": {
@@ -253,3 +272,32 @@ def test_repo_ui_assets_are_served(tmp_path: Path) -> None:
     js_resp = client.get("/app/app.js")
     assert js_resp.status_code == 200
     assert "materialityForRow" in js_resp.text
+
+
+def test_same_period_creates_incrementing_period_revision(tmp_path: Path) -> None:
+    app = create_app(
+        db_path=tmp_path / "runtime" / "api.sqlite3",
+        labels_dir=tmp_path / "labels",
+        events_log_path=tmp_path / "runtime" / "events.jsonl",
+    )
+    client = TestClient(app)
+
+    first_payload = _sample_ingest_payload(
+        source_email_id="email_phase4_rev_001",
+        period_end_date="2026-02-28",
+        received_at="2026-03-06T12:00:00+00:00",
+    )
+    second_payload = _sample_ingest_payload(
+        source_email_id="email_phase4_rev_002",
+        period_end_date="2026-02-28",
+        received_at="2026-03-06T12:15:00+00:00",
+    )
+    second_payload["files"][0]["checksum"] = "checksum-email_phase4_rev_002-changed"
+
+    first = client.post("/internal/v1/packages:ingest", json=first_payload)
+    second = client.post("/internal/v1/packages:ingest", json=second_payload)
+
+    assert first.status_code == 200
+    assert second.status_code == 200
+    assert first.json()["period_revision"] == 1
+    assert second.json()["period_revision"] == 2

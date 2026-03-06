@@ -6,6 +6,7 @@ const state = {
   packageManifestByPeriod: new Map(),
   packageEventsByPeriod: new Map(),
   traceEventsById: new Map(),
+  traceEvidenceById: new Map(),
   activePeriodId: null,
   selectedTraceId: null,
   selectedRow: null,
@@ -424,8 +425,12 @@ async function onRowSelected(periodId, traceId) {
 
   state.selectedTraceId = traceId;
   state.selectedRow = localRow;
-  const traceEvents = await api(`/internal/v1/traces/${encodeURIComponent(traceId)}/events?limit=500`).catch(() => ({ events: [] }));
+  const [traceEvents, traceEvidence] = await Promise.all([
+    api(`/internal/v1/traces/${encodeURIComponent(traceId)}/events?limit=500`).catch(() => ({ events: [] })),
+    api(`/internal/v1/traces/${encodeURIComponent(traceId)}/evidence`).catch(() => ({ evidence_preview: null })),
+  ]);
   state.traceEventsById.set(traceId, traceEvents.events || []);
+  state.traceEvidenceById.set(traceId, traceEvidence.evidence_preview || null);
 
   renderMiddlePanel();
   renderRightPanel();
@@ -520,38 +525,43 @@ function colLettersToIndex(text) {
   return result - 1;
 }
 
-function buildSheetGrid(locatorValue) {
-  const cellMatch = String(locatorValue || "").match(/([A-Za-z]+)(\d+)/);
-  if (!cellMatch) {
-    return '<p class="inline-note">No explicit cell locator available in this evidence.</p>';
+function buildSheetGridFromPreview(preview) {
+  if (!preview || preview.kind !== "xlsx_grid" || !Array.isArray(preview.rows) || !preview.rows.length) {
+    return '<p class="inline-note">No XLSX grid preview available for this locator.</p>';
   }
 
-  const targetCol = colLettersToIndex(cellMatch[1]);
-  const targetRow = Number(cellMatch[2]) - 1;
-  const rows = 6;
-  const cols = 7;
-
-  const headerCells = ["<th></th>"];
-  for (let c = 0; c < cols; c += 1) {
-    headerCells.push(`<th>${String.fromCharCode(65 + c)}</th>`);
-  }
-
-  const body = [];
-  for (let r = 0; r < rows; r += 1) {
-    const cells = [`<th>${r + 1}</th>`];
-    for (let c = 0; c < cols; c += 1) {
-      const isHighlight = r === targetRow && c === targetCol;
-      cells.push(`<td class="${isHighlight ? "highlight" : ""}">${isHighlight ? "Selected" : ""}</td>`);
-    }
-    body.push(`<tr>${cells.join("")}</tr>`);
-  }
+  const bodyRows = preview.rows
+    .map((row) => {
+      const cells = row
+        .map(
+          (cell) =>
+            `<td class="${cell.highlight ? "highlight" : ""}" title="${escapeHtml(cell.coordinate)}">${escapeHtml(
+              cell.value === null || cell.value === undefined ? "" : String(cell.value)
+            )}</td>`
+        )
+        .join("");
+      return `<tr>${cells}</tr>`;
+    })
+    .join("");
 
   return `
     <div class="sheet-view">
       <table class="sheet-grid">
-        <thead><tr>${headerCells.join("")}</tr></thead>
-        <tbody>${body.join("")}</tbody>
+        <tbody>${bodyRows}</tbody>
       </table>
+    </div>
+  `;
+}
+
+function buildPdfPreview(preview) {
+  if (!preview || preview.kind !== "pdf_text") {
+    return '<p class="inline-note">No PDF text preview available for this locator.</p>';
+  }
+  const page = preview.page || "?";
+  return `
+    <div class="evidence-highlight">
+      <div><strong>Page:</strong> ${escapeHtml(String(page))}</div>
+      <div class="inline-note" style="margin-top:8px; white-space: pre-wrap;">${escapeHtml(preview.text || "")}</div>
     </div>
   `;
 }
@@ -600,6 +610,17 @@ function renderFocusedEvidence(row) {
   const docName = doc?.filename || evidence.doc_id || "Unknown source";
   const docType = (doc?.doc_type || "DOC").toUpperCase();
   const confidence = Number(row.confidence || 0).toFixed(2);
+  const evidencePreview = state.traceEvidenceById.get(row.trace_id) || null;
+  const previewPayload = evidencePreview?.preview || null;
+
+  let previewBlock = '<p class="inline-note">No resolved evidence preview available.</p>';
+  if (evidencePreview && evidencePreview.available === false) {
+    previewBlock = `<p class="inline-note">Evidence preview unavailable: ${escapeHtml(evidencePreview.reason || "unknown_reason")}.</p>`;
+  } else if (docType === "XLSX") {
+    previewBlock = buildSheetGridFromPreview(previewPayload);
+  } else if (docType === "PDF") {
+    previewBlock = buildPdfPreview(previewPayload);
+  }
 
   const core = `
     <div class="evidence-focus">
@@ -612,7 +633,7 @@ function renderFocusedEvidence(row) {
         <div><strong>Locator:</strong> ${escapeHtml(evidence.locator_type || "unknown")} = ${escapeHtml(evidence.locator_value || "")}</div>
         <div><strong>Current value:</strong> ${escapeHtml(formatValue(row.current_value ?? row.normalized_value))}</div>
       </div>
-      ${docType === "XLSX" ? buildSheetGrid(evidence.locator_value) : '<p class="inline-note">PDF evidence view anchored by locator and source reference.</p>'}
+      ${previewBlock}
     </div>
   `;
 
@@ -693,7 +714,9 @@ async function resolveSelectedRow(optionIndex) {
   state.packageEventsByPeriod.set(state.activePeriodId, pkgEvents.events || []);
 
   const traceEvents = await api(`/internal/v1/traces/${encodeURIComponent(traceId)}/events?limit=500`).catch(() => ({ events: [] }));
+  const traceEvidence = await api(`/internal/v1/traces/${encodeURIComponent(traceId)}/evidence`).catch(() => ({ evidence_preview: null }));
   state.traceEventsById.set(traceId, traceEvents.events || []);
+  state.traceEvidenceById.set(traceId, traceEvidence.evidence_preview || null);
 
   state.selectedTraceId = traceId;
   state.selectedRow = findRowByTrace(state.activePeriodId, traceId);
