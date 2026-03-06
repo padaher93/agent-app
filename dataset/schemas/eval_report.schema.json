@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://patrici.us/schemas/eval_report.schema.json",
+  "title": "Evaluation Report",
+  "type": "object",
+  "required": [
+    "dataset_version",
+    "pipeline_version",
+    "generated_at",
+    "metrics",
+    "gate_pass",
+    "failures",
+    "row_counts",
+    "failure_taxonomy"
+  ],
+  "properties": {
+    "dataset_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pipeline_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "metrics": {
+      "type": "object",
+      "required": [
+        "verified_precision",
+        "evidence_link_accuracy",
+        "false_verified_rate",
+        "unresolved_rate",
+        "package_completion_rate"
+      ],
+      "properties": {
+        "verified_precision": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_link_accuracy": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "false_verified_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "unresolved_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "package_completion_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "gate_pass": {
+      "type": "boolean"
+    },
+    "failures": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "row_counts": {
+      "type": "object",
+      "required": ["total_rows", "verified_rows", "evidence_rows", "packages"],
+      "properties": {
+        "total_rows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "verified_rows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evidence_rows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "packages": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "failure_taxonomy": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["category", "count"],
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

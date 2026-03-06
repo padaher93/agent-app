@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://patrici.us/schemas/package_manifest.schema.json",
+  "title": "Package Manifest",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "package_id",
+    "deal_id",
+    "period_end_date",
+    "source_email_id",
+    "received_at",
+    "files",
+    "source_ids",
+    "variant_tags",
+    "quality_flags",
+    "labeling_workflow"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "package_id": {
+      "type": "string",
+      "pattern": "^pkg_[0-9]{4}(_var_[a-z_]+)?$"
+    },
+    "deal_id": {
+      "type": "string",
+      "pattern": "^deal_[a-z0-9_]+$"
+    },
+    "period_end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "source_email_id": {
+      "type": "string",
+      "pattern": "^email_[0-9]{4}$"
+    },
+    "received_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "required": [
+          "file_id",
+          "source_id",
+          "doc_type",
+          "filename",
+          "storage_uri",
+          "checksum",
+          "pages_or_sheets"
+        ],
+        "properties": {
+          "file_id": {
+            "type": "string",
+            "pattern": "^file_[0-9]{4}_[0-9]{2}$"
+          },
+          "source_id": {
+            "type": "string",
+            "pattern": "^src_[0-9]{4}$"
+          },
+          "doc_type": {
+            "type": "string",
+            "enum": ["PDF", "XLSX"]
+          },
+          "filename": {
+            "type": "string",
+            "minLength": 1
+          },
+          "storage_uri": {
+            "type": "string",
+            "pattern": "^s3://"
+          },
+          "checksum": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "pages_or_sheets": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "ocr_quality": {
+            "type": "string",
+            "enum": ["high", "degraded"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "source_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^src_[0-9]{4}$"
+      },
+      "uniqueItems": true
+    },
+    "variant_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "quality_flags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "labeling_workflow": {
+      "type": "object",
+      "required": [
+        "primary_labeler_status",
+        "reviewer_status",
+        "adjudication_status"
+      ],
+      "properties": {
+        "primary_labeler_status": {
+          "type": "string",
+          "enum": ["not_started", "in_progress", "completed"]
+        },
+        "reviewer_status": {
+          "type": "string",
+          "enum": ["not_started", "in_progress", "completed"]
+        },
+        "adjudication_status": {
+          "type": "string",
+          "enum": ["not_required", "required", "completed"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

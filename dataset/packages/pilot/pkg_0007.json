@@ -1,0 +1,43 @@
+{
+  "deal_id": "deal_dunlin",
+  "files": [
+    {
+      "checksum": "5b0d9680e0ed7c34cfc212e50cc3ffb86fbcd04d31da854625a9d507dd6ad548",
+      "doc_type": "XLSX",
+      "file_id": "file_0007_01",
+      "filename": "file_0007_01.xlsx",
+      "pages_or_sheets": 5,
+      "source_id": "src_0019",
+      "storage_uri": "s3://patricius-proxy-sources/src_0019.xlsx"
+    },
+    {
+      "checksum": "5631ba3817368e1d6b22f23b28eade98aaceb879080311898c5f23a005d5578e",
+      "doc_type": "PDF",
+      "file_id": "file_0007_02",
+      "filename": "file_0007_02.pdf",
+      "pages_or_sheets": 12,
+      "source_id": "src_0020",
+      "storage_uri": "s3://patricius-proxy-sources/src_0020.pdf"
+    }
+  ],
+  "labeling_workflow": {
+    "adjudication_status": "not_required",
+    "primary_labeler_status": "completed",
+    "reviewer_status": "completed"
+  },
+  "notes": "Proxy package built from public-source metadata.",
+  "package_id": "pkg_0007",
+  "period_end_date": "2025-10-31",
+  "quality_flags": [],
+  "received_at": "2026-03-06T16:20:28.439691+00:00",
+  "schema_version": "1.0",
+  "source_email_id": "email_0007",
+  "source_ids": [
+    "src_0019",
+    "src_0020"
+  ],
+  "variant_tags": [
+    "pilot",
+    "baseline"
+  ]
+}

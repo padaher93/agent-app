@@ -1,0 +1,67 @@
+{
+  "deal_id": "deal_coriant",
+  "files": [
+    {
+      "checksum": "c5401e087b82a47e1b630d2dc4baa30d34762c4b8fda35e9bcd1ff9638945582",
+      "doc_type": "PDF",
+      "file_id": "file_0006_01",
+      "filename": "file_0006_01.pdf",
+      "pages_or_sheets": 12,
+      "source_id": "src_0016",
+      "storage_uri": "s3://patricius-proxy-sources/src_0016.pdf"
+    },
+    {
+      "checksum": "6c7184aa844a38cff74b2769008c5dab169cc8878d30ba6d68004414590185c3",
+      "doc_type": "XLSX",
+      "file_id": "file_0006_02",
+      "filename": "file_0006_02.xlsx",
+      "pages_or_sheets": 5,
+      "source_id": "src_0017",
+      "storage_uri": "s3://patricius-proxy-sources/src_0017.xlsx"
+    },
+    {
+      "checksum": "6eae8b35933a7fc116874a05ae10db74d9faed9f060134c050cedcfe610b522d",
+      "doc_type": "PDF",
+      "file_id": "file_0006_03",
+      "filename": "file_0006_03.pdf",
+      "pages_or_sheets": 12,
+      "source_id": "src_0018",
+      "storage_uri": "s3://patricius-proxy-sources/src_0018.pdf"
+    },
+    {
+      "checksum": "e76c7557ec4153a43eebf6bae76d06feffe400731cee373ab47bfc0f541795f3",
+      "doc_type": "XLSX",
+      "file_id": "file_0006_04",
+      "filename": "file_0006_04.xlsx",
+      "pages_or_sheets": 5,
+      "source_id": "src_0019",
+      "storage_uri": "s3://patricius-proxy-sources/src_0019.xlsx"
+    }
+  ],
+  "labeling_workflow": {
+    "adjudication_status": "not_required",
+    "primary_labeler_status": "completed",
+    "reviewer_status": "completed"
+  },
+  "notes": "Proxy package built from public-source metadata.",
+  "package_id": "pkg_0006_var_currency_inconsistency",
+  "period_end_date": "2025-11-30",
+  "quality_flags": [
+    "currency_inconsistency"
+  ],
+  "received_at": "2026-03-06T16:19:28.439691+00:00",
+  "schema_version": "1.0",
+  "source_email_id": "email_0006",
+  "source_ids": [
+    "src_0016",
+    "src_0017",
+    "src_0018",
+    "src_0019"
+  ],
+  "variant_tags": [
+    "currency_inconsistency",
+    "follow_up",
+    "pilot",
+    "synthetic_stress"
+  ]
+}

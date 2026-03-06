@@ -1,0 +1,366 @@
+{
+  "generated_at": "2026-03-06T16:14:28.438979+00:00",
+  "schema_version": "1.0",
+  "sources": [
+    {
+      "checksum": "b3077ca736a4efaef91fd18eb8ab3d648e9ef65ffbe1bfb48580f47be65f8377",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0001",
+      "storage_uri": "s3://patricius-proxy-sources/src_0001.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214501/d127351dex101.htm"
+    },
+    {
+      "checksum": "e7148ede75e470ed238e4800b5f7b4ef032dce3b97d75e4d880e92e9583e5a88",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0002",
+      "storage_uri": "s3://patricius-proxy-sources/src_0002.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041172/formars.pdf"
+    },
+    {
+      "checksum": "42cf9b963613ac8df750f448bd33367943fa206154a0df7f2a2210ea4dd23d8c",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0003",
+      "storage_uri": "s3://patricius-proxy-sources/src_0003.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214503/d127351dex101.htm"
+    },
+    {
+      "checksum": "4588153ca795e79a796a19e6da6f9a167179e4679839c8d9a3d906f9028d4358",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0004",
+      "storage_uri": "s3://patricius-proxy-sources/src_0004.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041174/formars.pdf"
+    },
+    {
+      "checksum": "46d22fc6adeceed2d2eb23e39e2caf57db7984deea4f3838f2903feedf805701",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0005",
+      "storage_uri": "s3://patricius-proxy-sources/src_0005.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214505/d127351dex101.htm"
+    },
+    {
+      "checksum": "0116788c23662aa7afe2ac8025f567cac04e922526bc2f83a0ccb8c6d430c2c8",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0006",
+      "storage_uri": "s3://patricius-proxy-sources/src_0006.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041176/formars.pdf"
+    },
+    {
+      "checksum": "063930de0bb3a478c1c60bb330eb487683d99599256e08f14f0e69bedf3d05d0",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0007",
+      "storage_uri": "s3://patricius-proxy-sources/src_0007.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214507/d127351dex101.htm"
+    },
+    {
+      "checksum": "72fdc99bf6aeddcba22fed0041a9d91be4552ed2820746969f4276c46e59bfcc",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0008",
+      "storage_uri": "s3://patricius-proxy-sources/src_0008.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041178/formars.pdf"
+    },
+    {
+      "checksum": "b5a4e4df14437e0479125b507878c631b37a89fbdc39dc7be3a6bfca3f45b5c0",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0009",
+      "storage_uri": "s3://patricius-proxy-sources/src_0009.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214509/d127351dex101.htm"
+    },
+    {
+      "checksum": "66b20e3b0611e0ef3d106c9a770d1ef03b83cd7557fc840c1a8dca7bf84747b8",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0010",
+      "storage_uri": "s3://patricius-proxy-sources/src_0010.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041170/formars.pdf"
+    },
+    {
+      "checksum": "a4b8db291e7d8975e6ab45ad612b08a229c511b9a580656de9fc8f197f2f3d5e",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0011",
+      "storage_uri": "s3://patricius-proxy-sources/src_0011.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214511/d127351dex101.htm"
+    },
+    {
+      "checksum": "2df41804f2050004a1550c690d320f3ac0c45c723ff82a39960549f59afedbd5",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0012",
+      "storage_uri": "s3://patricius-proxy-sources/src_0012.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041172/formars.pdf"
+    },
+    {
+      "checksum": "072d98b218a437fcda3f30abdb98de0c6dee5dfce3e6980d31d24fd4b3e15232",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0013",
+      "storage_uri": "s3://patricius-proxy-sources/src_0013.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214513/d127351dex101.htm"
+    },
+    {
+      "checksum": "e910619304b127a7353f5586584949647f996b4c77592169b7a8cfa025fae4de",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0014",
+      "storage_uri": "s3://patricius-proxy-sources/src_0014.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041174/formars.pdf"
+    },
+    {
+      "checksum": "754d51278ebb76a806144eb4a1c6e893b3d2b99f61f61a246b513d18d194ad9d",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0015",
+      "storage_uri": "s3://patricius-proxy-sources/src_0015.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214515/d127351dex101.htm"
+    },
+    {
+      "checksum": "31247c7396db2216a3cda9f1778d6b0c79457cb3a891405eb183327592ac47f0",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0016",
+      "storage_uri": "s3://patricius-proxy-sources/src_0016.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041176/formars.pdf"
+    },
+    {
+      "checksum": "ebb2d410407aa99656aca502c6467916888a28f3d1a9110ecb2b55606d65d561",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0017",
+      "storage_uri": "s3://patricius-proxy-sources/src_0017.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214517/d127351dex101.htm"
+    },
+    {
+      "checksum": "f1135250a8899a19df6fb936444497851f025fcfbb4e178f6696fdc482be428c",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0018",
+      "storage_uri": "s3://patricius-proxy-sources/src_0018.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041178/formars.pdf"
+    },
+    {
+      "checksum": "9eb717dcc2706b95e2544a551fdb61c0a477b40021f1beda7bb7bb82a4e32b97",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0019",
+      "storage_uri": "s3://patricius-proxy-sources/src_0019.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214519/d127351dex101.htm"
+    },
+    {
+      "checksum": "9e62c074642b93683eac78f31dcddf425df93593d7267e19577150c2e15ffdb1",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0020",
+      "storage_uri": "s3://patricius-proxy-sources/src_0020.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041170/formars.pdf"
+    },
+    {
+      "checksum": "b3e521a59966896d3060b4894c36dd4627950f31c9d045aed7cfe069db55d56f",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0021",
+      "storage_uri": "s3://patricius-proxy-sources/src_0021.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214521/d127351dex101.htm"
+    },
+    {
+      "checksum": "99bffd0595c0e536c593c547efe6b86a2afdf973e9048a90f37327033690c6fe",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0022",
+      "storage_uri": "s3://patricius-proxy-sources/src_0022.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041172/formars.pdf"
+    },
+    {
+      "checksum": "a0a0043e52b75ef20126e1deb2336c7f12f3cbb56fde611e93640b8f98c91681",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0023",
+      "storage_uri": "s3://patricius-proxy-sources/src_0023.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214523/d127351dex101.htm"
+    },
+    {
+      "checksum": "15015b500aa170f4513767bdc73601aa9f3b262e903c6f4a8fd3ef1ffc91932b",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0024",
+      "storage_uri": "s3://patricius-proxy-sources/src_0024.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041174/formars.pdf"
+    },
+    {
+      "checksum": "bc2d85c7c042abedfd52ff5ff1be2c935e9e21545527eba96503a71128d6bfda",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0025",
+      "storage_uri": "s3://patricius-proxy-sources/src_0025.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214525/d127351dex101.htm"
+    },
+    {
+      "checksum": "7d042bce0a69732747631cb2cf40101eb8f54406435f043dff0134147badf507",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0026",
+      "storage_uri": "s3://patricius-proxy-sources/src_0026.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041176/formars.pdf"
+    },
+    {
+      "checksum": "a7aa173964b022efb87937ea8d94c3eeeb62f0020ec5ce08726ab7945744cda4",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0027",
+      "storage_uri": "s3://patricius-proxy-sources/src_0027.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214527/d127351dex101.htm"
+    },
+    {
+      "checksum": "b715e0313dd600f6a32e029dc34b2d8fbec30fbd5d15b4e2548af1f6a8ec4fcb",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0028",
+      "storage_uri": "s3://patricius-proxy-sources/src_0028.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041178/formars.pdf"
+    },
+    {
+      "checksum": "a5af9863fe1398decf6ef5629726045445b239813927bfad724364db2681543e",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0029",
+      "storage_uri": "s3://patricius-proxy-sources/src_0029.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214529/d127351dex101.htm"
+    },
+    {
+      "checksum": "6e6aedab34cbf1ce33137425b547c0047199cb57566d06c2a8d4214d6d9964c2",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0030",
+      "storage_uri": "s3://patricius-proxy-sources/src_0030.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041170/formars.pdf"
+    },
+    {
+      "checksum": "e1e04aa03babaecead0b961dddffc193eb2317c03582faad373ed9cea3cee792",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0031",
+      "storage_uri": "s3://patricius-proxy-sources/src_0031.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214531/d127351dex101.htm"
+    },
+    {
+      "checksum": "5d6ef687504088f2afaa5af1c598fe52ad4a4b089b6fcd3cddff029c2e43517e",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0032",
+      "storage_uri": "s3://patricius-proxy-sources/src_0032.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041172/formars.pdf"
+    },
+    {
+      "checksum": "bcc8efed5bf98186d3b30031652098e22cee3d14765620034f2836102c66aef9",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0033",
+      "storage_uri": "s3://patricius-proxy-sources/src_0033.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214533/d127351dex101.htm"
+    },
+    {
+      "checksum": "e5f519d2a6c5838c66e5d49bef83bd93eb10c436b742ab2445f189bf4441f2e7",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0034",
+      "storage_uri": "s3://patricius-proxy-sources/src_0034.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041174/formars.pdf"
+    },
+    {
+      "checksum": "e67f053180fc55fbd3f91789d633c412c3b406c67b9a823c31f17276b7bfcd1f",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0035",
+      "storage_uri": "s3://patricius-proxy-sources/src_0035.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214535/d127351dex101.htm"
+    },
+    {
+      "checksum": "5225df58d618ba6d9c05f364ceacd2694fd9d5c828ef9ce8f8af066be54d5b54",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0036",
+      "storage_uri": "s3://patricius-proxy-sources/src_0036.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041176/formars.pdf"
+    },
+    {
+      "checksum": "ce72250d37c1adbd5b6b12778adac5aea53957753ff25413b963140d7cc1db03",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0037",
+      "storage_uri": "s3://patricius-proxy-sources/src_0037.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214537/d127351dex101.htm"
+    },
+    {
+      "checksum": "e2edbd0ee1e10cd026df2aabb60052a6ef77613de7270708bc707083080251c1",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0038",
+      "storage_uri": "s3://patricius-proxy-sources/src_0038.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041178/formars.pdf"
+    },
+    {
+      "checksum": "689ea27684c91798912ea2f3e649dd6ab61717cc5eb9ee9ed1cd44132136b613",
+      "doc_type": "XLSX",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0039",
+      "storage_uri": "s3://patricius-proxy-sources/src_0039.xlsx",
+      "url": "https://www.sec.gov/Archives/edgar/data/1722926/000119312521214539/d127351dex101.htm"
+    },
+    {
+      "checksum": "1013287998fb872d0437d15bcf1546ba847ed9962ec0aa41622aeb7a9dd5b691",
+      "doc_type": "PDF",
+      "license_note": "Public filing metadata; raw file stored in object storage.",
+      "retrieved_at": "2026-03-06T16:14:28.438979+00:00",
+      "source_id": "src_0040",
+      "storage_uri": "s3://patricius-proxy-sources/src_0040.pdf",
+      "url": "https://www.sec.gov/Archives/edgar/data/1007019/000149315224041170/formars.pdf"
+    }
+  ]
+}

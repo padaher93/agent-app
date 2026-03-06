@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://patrici.us/schemas/ground_truth_file.schema.json",
+  "title": "Ground Truth File",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "package_id",
+    "deal_id",
+    "period_end_date",
+    "dictionary_version",
+    "labeling",
+    "rows"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "package_id": {
+      "type": "string",
+      "pattern": "^pkg_[0-9]{4}(_var_[a-z_]+)?$"
+    },
+    "deal_id": {
+      "type": "string",
+      "pattern": "^deal_[a-z0-9_]+$"
+    },
+    "period_end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "dictionary_version": {
+      "type": "string",
+      "pattern": "^v[0-9]+\\.[0-9]+$"
+    },
+    "labeling": {
+      "type": "object",
+      "required": ["primary_labeler", "reviewer", "adjudication_required"],
+      "properties": {
+        "primary_labeler": {
+          "type": "string"
+        },
+        "reviewer": {
+          "type": "string"
+        },
+        "adjudication_required": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "rows": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "trace_id",
+          "concept_id",
+          "period_end_date",
+          "raw_value_text",
+          "normalized_value",
+          "unit_currency",
+          "expected_status",
+          "labeler_confidence",
+          "flags",
+          "normalization",
+          "evidence"
+        ],
+        "properties": {
+          "trace_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "concept_id": {
+            "type": "string",
+            "enum": [
+              "revenue_total",
+              "ebitda_reported",
+              "ebitda_adjusted",
+              "operating_income_ebit",
+              "interest_expense",
+              "net_income",
+              "cash_and_equivalents",
+              "accounts_receivable_total",
+              "inventory_total",
+              "accounts_payable_total",
+              "total_debt",
+              "total_assets",
+              "total_liabilities"
+            ]
+          },
+          "period_end_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "raw_value_text": {
+            "type": "string"
+          },
+          "normalized_value": {
+            "type": ["number", "null"]
+          },
+          "unit_currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$"
+          },
+          "expected_status": {
+            "type": "string",
+            "enum": ["verified", "candidate_flagged", "unresolved"]
+          },
+          "labeler_confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "normalization": {
+            "type": "object",
+            "required": ["raw_scale", "normalized_scale", "currency_conversion_applied"],
+            "properties": {
+              "raw_scale": {
+                "type": "string",
+                "enum": ["absolute", "K", "M", "B"]
+              },
+              "normalized_scale": {
+                "type": "string",
+                "const": "absolute"
+              },
+              "currency_conversion_applied": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          },
+          "evidence": {
+            "type": "object",
+            "required": [
+              "doc_id",
+              "doc_name",
+              "page_or_sheet",
+              "locator_type",
+              "locator_value",
+              "source_snippet"
+            ],
+            "properties": {
+              "doc_id": {
+                "type": "string"
+              },
+              "doc_name": {
+                "type": "string"
+              },
+              "page_or_sheet": {
+                "type": "string"
+              },
+              "locator_type": {
+                "type": "string",
+                "enum": ["cell", "bbox", "paragraph"]
+              },
+              "locator_value": {
+                "type": "string"
+              },
+              "source_snippet": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

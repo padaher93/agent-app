@@ -1,0 +1,135 @@
+{
+  "checksums": [
+    {
+      "kind": "package_manifest",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/packages/pilot/pkg_0001.json",
+      "sha256": "75a5f0c93a46987474d5a4dbc95c5302f895b3fa45942e5b49af5b13f5b9fe90"
+    },
+    {
+      "kind": "package_manifest",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/packages/pilot/pkg_0002.json",
+      "sha256": "636230f1491227b789f2fbb61a4e35975a2ed544e39d7753d1dd729d9b4bcf17"
+    },
+    {
+      "kind": "package_manifest",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/packages/pilot/pkg_0003.json",
+      "sha256": "190d63e99a6c2fdabb54c2e3f339ab8fa97bdb29cc04e1e314e70f790cb90a0b"
+    },
+    {
+      "kind": "package_manifest",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/packages/pilot/pkg_0004.json",
+      "sha256": "0211672d95fc82ef4945fd9f0826c3de36b38ae2413dd15c79f780c468fa00cc"
+    },
+    {
+      "kind": "package_manifest",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/packages/pilot/pkg_0005.json",
+      "sha256": "46980f367bb4ff2de8a95529500117ed66522f78eaf02502d7030264ecfc4efc"
+    },
+    {
+      "kind": "package_manifest",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/packages/pilot/pkg_0006.json",
+      "sha256": "b4c001fb5612eb4d4fb908f64dc794ea952843bb14a459c124cf0b39cb6e44ab"
+    },
+    {
+      "kind": "package_manifest",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/packages/pilot/pkg_0007.json",
+      "sha256": "33b3a981f9f13cfe44b6927550a4f022537be84e2e525571d2007f86ff8986f5"
+    },
+    {
+      "kind": "package_manifest",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/packages/pilot/pkg_0008.json",
+      "sha256": "eebb6a5f8efcd6c0e2c85b8929573ec348d5d3d89d3b43c3f8a07890d7d7de9a"
+    },
+    {
+      "kind": "package_manifest",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/packages/pilot/pkg_0009.json",
+      "sha256": "4dd9e8a9813d740d6474d31e86008f70e200b5e32a941e173a9c260a0b63a388"
+    },
+    {
+      "kind": "package_manifest",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/packages/pilot/pkg_0010.json",
+      "sha256": "3f1c4a342f88c0a19eaaeca11a0f67f39d35770ac74da9ee7d09ef7018e8810c"
+    },
+    {
+      "kind": "ground_truth",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/labels/pilot/pkg_0001.ground_truth.json",
+      "sha256": "4b8bb7c9d1812362f7ef64604b4e2690e698311adde6133662ef0c0e6b624fb0"
+    },
+    {
+      "kind": "ground_truth",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/labels/pilot/pkg_0002.ground_truth.json",
+      "sha256": "12116285d7f03fecfd03134ba66d2e9689bbc9f8b625d126cbdae7bbdd19ce3d"
+    },
+    {
+      "kind": "ground_truth",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/labels/pilot/pkg_0003.ground_truth.json",
+      "sha256": "9c60ef6e66bd44b99dc55c52b9f74d34b4d6be960ecc7c6ee73889dd6dd0c53b"
+    },
+    {
+      "kind": "ground_truth",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/labels/pilot/pkg_0004.ground_truth.json",
+      "sha256": "516a3e529fb156f4fc1d9fa00c2b5f8ff87db217efb785ad9b7cc2337c3c7c38"
+    },
+    {
+      "kind": "ground_truth",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/labels/pilot/pkg_0005.ground_truth.json",
+      "sha256": "4da7ab899f9619a24f2b1cb8a642acf17232c8fe569fd08913a1dbeceb225dc8"
+    },
+    {
+      "kind": "ground_truth",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/labels/pilot/pkg_0006.ground_truth.json",
+      "sha256": "436b4844ac46f5e6f75d3b7caff6eacdd7722f292469c13f7dd01883a0f6245d"
+    },
+    {
+      "kind": "ground_truth",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/labels/pilot/pkg_0007.ground_truth.json",
+      "sha256": "280637d3d402dd3c0ccf7d7694eaededd9aeb1c58162eed86f10c790272070b0"
+    },
+    {
+      "kind": "ground_truth",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/labels/pilot/pkg_0008.ground_truth.json",
+      "sha256": "9cf063cc6d79c0e438acd29042ed1f143e64220c46ca0396007e746e6a4325e8"
+    },
+    {
+      "kind": "ground_truth",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/labels/pilot/pkg_0009.ground_truth.json",
+      "sha256": "74aa4a2605de83b4778845d03680746a36155c4fdd91b2a710de1e049dc09635"
+    },
+    {
+      "kind": "ground_truth",
+      "path": "/Users/patriciodaher/Desktop/agent-app/dataset/labels/pilot/pkg_0010.ground_truth.json",
+      "sha256": "fc46b15247b859caa5b049248545258bbfe654eb9ad3bfddc527cfe935cce47a"
+    }
+  ],
+  "counts": {
+    "labels": 10,
+    "packages": 10
+  },
+  "created_at": "2026-03-06T16:14:28.445415+00:00",
+  "dataset_version": "dataset_pilot_v0.1",
+  "immutable": true,
+  "split_policy": {
+    "seed": 20260306,
+    "test": 0.2,
+    "train_dev": 0.7,
+    "validation": 0.1
+  },
+  "splits": {
+    "test": [
+      "pkg_0003",
+      "pkg_0009"
+    ],
+    "train_dev": [
+      "pkg_0001",
+      "pkg_0002",
+      "pkg_0004",
+      "pkg_0005",
+      "pkg_0007",
+      "pkg_0008",
+      "pkg_0010"
+    ],
+    "validation": [
+      "pkg_0006"
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "deal_id": "deal_alderon",
+  "files": [
+    {
+      "checksum": "d7b07b54979af676d38398292f1686ab476d464198f26c0d5145b6680f0ea29e",
+      "doc_type": "XLSX",
+      "file_id": "file_0001_01",
+      "filename": "file_0001_01.xlsx",
+      "pages_or_sheets": 5,
+      "source_id": "src_0001",
+      "storage_uri": "s3://patricius-proxy-sources/src_0001.xlsx"
+    },
+    {
+      "checksum": "fd34cdc61d32c8f6599562abca9ca59132938c56d1b905255e9ee1062ce23bda",
+      "doc_type": "PDF",
+      "file_id": "file_0001_02",
+      "filename": "file_0001_02.pdf",
+      "pages_or_sheets": 12,
+      "source_id": "src_0002",
+      "storage_uri": "s3://patricius-proxy-sources/src_0002.pdf"
+    }
+  ],
+  "labeling_workflow": {
+    "adjudication_status": "not_required",
+    "primary_labeler_status": "completed",
+    "reviewer_status": "completed"
+  },
+  "notes": "Proxy package built from public-source metadata.",
+  "package_id": "pkg_0001",
+  "period_end_date": "2025-09-30",
+  "quality_flags": [],
+  "received_at": "2026-03-06T16:14:28.439691+00:00",
+  "schema_version": "1.0",
+  "source_email_id": "email_0001",
+  "source_ids": [
+    "src_0001",
+    "src_0002"
+  ],
+  "variant_tags": [
+    "pilot",
+    "baseline"
+  ]
+}

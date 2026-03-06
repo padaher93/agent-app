@@ -1,0 +1,326 @@
+{
+  "deal_id": "deal_scale_011",
+  "dictionary_version": "v1.0",
+  "labeling": {
+    "adjudication_required": false,
+    "primary_labeler": "analyst_scaled",
+    "reviewer": "reviewer_scaled"
+  },
+  "package_id": "pkg_0021",
+  "period_end_date": "2025-09-30",
+  "rows": [
+    {
+      "concept_id": "revenue_total",
+      "evidence": {
+        "doc_id": "file_0021_01",
+        "doc_name": "file_0021_01.pdf",
+        "locator_type": "paragraph",
+        "locator_value": "p2:l3",
+        "page_or_sheet": "Page 2",
+        "source_snippet": "Revenue Total: 18500000.0"
+      },
+      "expected_status": "verified",
+      "flags": [],
+      "labeler_confidence": 0.98,
+      "normalization": {
+        "currency_conversion_applied": false,
+        "normalized_scale": "absolute",
+        "raw_scale": "absolute"
+      },
+      "normalized_value": 18500000.0,
+      "period_end_date": "2025-09-30",
+      "raw_value_text": "$18,500,000.00",
+      "trace_id": "tr_pkg_0021_revenue_total",
+      "unit_currency": "USD"
+    },
+    {
+      "concept_id": "ebitda_reported",
+      "evidence": {
+        "doc_id": "file_0021_02",
+        "doc_name": "file_0021_02.xlsx",
+        "locator_type": "cell",
+        "locator_value": "B16",
+        "page_or_sheet": "Summary",
+        "source_snippet": "Ebitda Reported: 3626000.0"
+      },
+      "expected_status": "verified",
+      "flags": [],
+      "labeler_confidence": 0.98,
+      "normalization": {
+        "currency_conversion_applied": false,
+        "normalized_scale": "absolute",
+        "raw_scale": "absolute"
+      },
+      "normalized_value": 3626000.0,
+      "period_end_date": "2025-09-30",
+      "raw_value_text": "$3,626,000.00",
+      "trace_id": "tr_pkg_0021_ebitda_reported",
+      "unit_currency": "USD"
+    },
+    {
+      "concept_id": "ebitda_adjusted",
+      "evidence": {
+        "doc_id": "file_0021_01",
+        "doc_name": "file_0021_01.pdf",
+        "locator_type": "paragraph",
+        "locator_value": "p4:l3",
+        "page_or_sheet": "Page 4",
+        "source_snippet": "Ebitda Adjusted: 3877600.0"
+      },
+      "expected_status": "verified",
+      "flags": [],
+      "labeler_confidence": 0.98,
+      "normalization": {
+        "currency_conversion_applied": false,
+        "normalized_scale": "absolute",
+        "raw_scale": "absolute"
+      },
+      "normalized_value": 3877600.0,
+      "period_end_date": "2025-09-30",
+      "raw_value_text": "$3,877,600.00",
+      "trace_id": "tr_pkg_0021_ebitda_adjusted",
+      "unit_currency": "USD"
+    },
+    {
+      "concept_id": "operating_income_ebit",
+      "evidence": {
+        "doc_id": "file_0021_02",
+        "doc_name": "file_0021_02.xlsx",
+        "locator_type": "cell",
+        "locator_value": "B18",
+        "page_or_sheet": "Summary",
+        "source_snippet": "Operating Income Ebit: 2930400.0"
+      },
+      "expected_status": "verified",
+      "flags": [],
+      "labeler_confidence": 0.98,
+      "normalization": {
+        "currency_conversion_applied": false,
+        "normalized_scale": "absolute",
+        "raw_scale": "absolute"
+      },
+      "normalized_value": 2930400.0,
+      "period_end_date": "2025-09-30",
+      "raw_value_text": "$2,930,400.00",
+      "trace_id": "tr_pkg_0021_operating_income_ebit",
+      "unit_currency": "USD"
+    },
+    {
+      "concept_id": "interest_expense",
+      "evidence": {
+        "doc_id": "file_0021_01",
+        "doc_name": "file_0021_01.pdf",
+        "locator_type": "paragraph",
+        "locator_value": "p6:l3",
+        "page_or_sheet": "Page 6",
+        "source_snippet": "Interest Expense: 680800.0"
+      },
+      "expected_status": "verified",
+      "flags": [],
+      "labeler_confidence": 0.98,
+      "normalization": {
+        "currency_conversion_applied": false,
+        "normalized_scale": "absolute",
+        "raw_scale": "absolute"
+      },
+      "normalized_value": 680800.0,
+      "period_end_date": "2025-09-30",
+      "raw_value_text": "$680,800.00",
+      "trace_id": "tr_pkg_0021_interest_expense",
+      "unit_currency": "USD"
+    },
+    {
+      "concept_id": "net_income",
+      "evidence": {
+        "doc_id": "file_0021_02",
+        "doc_name": "file_0021_02.xlsx",
+        "locator_type": "cell",
+        "locator_value": "B20",
+        "page_or_sheet": "Summary",
+        "source_snippet": "Net Income: 1790800.0"
+      },
+      "expected_status": "verified",
+      "flags": [],
+      "labeler_confidence": 0.98,
+      "normalization": {
+        "currency_conversion_applied": false,
+        "normalized_scale": "absolute",
+        "raw_scale": "absolute"
+      },
+      "normalized_value": 1790800.0,
+      "period_end_date": "2025-09-30",
+      "raw_value_text": "$1,790,800.00",
+      "trace_id": "tr_pkg_0021_net_income",
+      "unit_currency": "USD"
+    },
+    {
+      "concept_id": "cash_and_equivalents",
+      "evidence": {
+        "doc_id": "file_0021_01",
+        "doc_name": "file_0021_01.pdf",
+        "locator_type": "paragraph",
+        "locator_value": "p8:l3",
+        "page_or_sheet": "Page 8",
+        "source_snippet": "Cash And Equivalents: 2738000.0"
+      },
+      "expected_status": "verified",
+      "flags": [],
+      "labeler_confidence": 0.98,
+      "normalization": {
+        "currency_conversion_applied": false,
+        "normalized_scale": "absolute",
+        "raw_scale": "absolute"
+      },
+      "normalized_value": 2738000.0,
+      "period_end_date": "2025-09-30",
+      "raw_value_text": "$2,738,000.00",
+      "trace_id": "tr_pkg_0021_cash_and_equivalents",
+      "unit_currency": "USD"
+    },
+    {
+      "concept_id": "accounts_receivable_total",
+      "evidence": {
+        "doc_id": "file_0021_02",
+        "doc_name": "file_0021_02.xlsx",
+        "locator_type": "cell",
+        "locator_value": "B22",
+        "page_or_sheet": "Summary",
+        "source_snippet": "Accounts Receivable Total: 4040400.0"
+      },
+      "expected_status": "verified",
+      "flags": [],
+      "labeler_confidence": 0.98,
+      "normalization": {
+        "currency_conversion_applied": false,
+        "normalized_scale": "absolute",
+        "raw_scale": "absolute"
+      },
+      "normalized_value": 4040400.0,
+      "period_end_date": "2025-09-30",
+      "raw_value_text": "$4,040,400.00",
+      "trace_id": "tr_pkg_0021_accounts_receivable_total",
+      "unit_currency": "USD"
+    },
+    {
+      "concept_id": "inventory_total",
+      "evidence": {
+        "doc_id": "file_0021_01",
+        "doc_name": "file_0021_01.pdf",
+        "locator_type": "paragraph",
+        "locator_value": "p2:l3",
+        "page_or_sheet": "Page 2",
+        "source_snippet": "Inventory Total: 2205200.0"
+      },
+      "expected_status": "verified",
+      "flags": [],
+      "labeler_confidence": 0.98,
+      "normalization": {
+        "currency_conversion_applied": false,
+        "normalized_scale": "absolute",
+        "raw_scale": "absolute"
+      },
+      "normalized_value": 2205200.0,
+      "period_end_date": "2025-09-30",
+      "raw_value_text": "$2,205,200.00",
+      "trace_id": "tr_pkg_0021_inventory_total",
+      "unit_currency": "USD"
+    },
+    {
+      "concept_id": "accounts_payable_total",
+      "evidence": {
+        "doc_id": "file_0021_02",
+        "doc_name": "file_0021_02.xlsx",
+        "locator_type": "cell",
+        "locator_value": "B24",
+        "page_or_sheet": "Summary",
+        "source_snippet": "Accounts Payable Total: 3167200.0"
+      },
+      "expected_status": "verified",
+      "flags": [],
+      "labeler_confidence": 0.98,
+      "normalization": {
+        "currency_conversion_applied": false,
+        "normalized_scale": "absolute",
+        "raw_scale": "absolute"
+      },
+      "normalized_value": 3167200.0,
+      "period_end_date": "2025-09-30",
+      "raw_value_text": "$3,167,200.00",
+      "trace_id": "tr_pkg_0021_accounts_payable_total",
+      "unit_currency": "USD"
+    },
+    {
+      "concept_id": "total_debt",
+      "evidence": {
+        "doc_id": "file_0021_01",
+        "doc_name": "file_0021_01.pdf",
+        "locator_type": "paragraph",
+        "locator_value": "p4:l3",
+        "page_or_sheet": "Page 4",
+        "source_snippet": "Total Debt: 16576000.0"
+      },
+      "expected_status": "verified",
+      "flags": [],
+      "labeler_confidence": 0.98,
+      "normalization": {
+        "currency_conversion_applied": false,
+        "normalized_scale": "absolute",
+        "raw_scale": "absolute"
+      },
+      "normalized_value": 16576000.0,
+      "period_end_date": "2025-09-30",
+      "raw_value_text": "$16,576,000.00",
+      "trace_id": "tr_pkg_0021_total_debt",
+      "unit_currency": "USD"
+    },
+    {
+      "concept_id": "total_assets",
+      "evidence": {
+        "doc_id": "file_0021_02",
+        "doc_name": "file_0021_02.xlsx",
+        "locator_type": "cell",
+        "locator_value": "B16",
+        "page_or_sheet": "Summary",
+        "source_snippet": "Total Assets: 42328000.0"
+      },
+      "expected_status": "verified",
+      "flags": [],
+      "labeler_confidence": 0.98,
+      "normalization": {
+        "currency_conversion_applied": false,
+        "normalized_scale": "absolute",
+        "raw_scale": "absolute"
+      },
+      "normalized_value": 42328000.0,
+      "period_end_date": "2025-09-30",
+      "raw_value_text": "$42,328,000.00",
+      "trace_id": "tr_pkg_0021_total_assets",
+      "unit_currency": "USD"
+    },
+    {
+      "concept_id": "total_liabilities",
+      "evidence": {
+        "doc_id": "file_0021_01",
+        "doc_name": "file_0021_01.pdf",
+        "locator_type": "paragraph",
+        "locator_value": "p6:l3",
+        "page_or_sheet": "Page 6",
+        "source_snippet": "Total Liabilities: 24716000.0"
+      },
+      "expected_status": "verified",
+      "flags": [],
+      "labeler_confidence": 0.98,
+      "normalization": {
+        "currency_conversion_applied": false,
+        "normalized_scale": "absolute",
+        "raw_scale": "absolute"
+      },
+      "normalized_value": 24716000.0,
+      "period_end_date": "2025-09-30",
+      "raw_value_text": "$24,716,000.00",
+      "trace_id": "tr_pkg_0021_total_liabilities",
+      "unit_currency": "USD"
+    }
+  ],
+  "schema_version": "1.0"
+}

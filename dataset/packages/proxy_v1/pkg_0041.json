@@ -1,0 +1,63 @@
+{
+  "deal_id": "deal_scale_011",
+  "files": [
+    {
+      "checksum": "286631ae0b5998cc3f6f7200f2e175d2032c2a6f0a38f90d3f02da3c1423b58c",
+      "doc_type": "PDF",
+      "file_id": "file_0041_01",
+      "filename": "file_0041_01.pdf",
+      "pages_or_sheets": 10,
+      "source_id": "src_0002",
+      "storage_uri": "s3://patricius-proxy-sources/src_0002.pdf"
+    },
+    {
+      "checksum": "302a737f0486f7ea4e507d7a493994dc4bd1507de5662dcf4bfaacab2c067eb2",
+      "doc_type": "XLSX",
+      "file_id": "file_0041_02",
+      "filename": "file_0041_02.xlsx",
+      "pages_or_sheets": 10,
+      "source_id": "src_0003",
+      "storage_uri": "s3://patricius-proxy-sources/src_0003.xlsx"
+    },
+    {
+      "checksum": "4e0c9c99516efc67dc5f50c0e2dc22adfccad480e5a1075a944d6db05bdff93d",
+      "doc_type": "PDF",
+      "file_id": "file_0041_03",
+      "filename": "file_0041_03.pdf",
+      "pages_or_sheets": 10,
+      "source_id": "src_0004",
+      "storage_uri": "s3://patricius-proxy-sources/src_0004.pdf"
+    },
+    {
+      "checksum": "7919fdd71c1b611d1a7265dd2151f8ee98e086cbd8aee0d1c05f9e1a9b805794",
+      "doc_type": "XLSX",
+      "file_id": "file_0041_04",
+      "filename": "file_0041_04.xlsx",
+      "pages_or_sheets": 10,
+      "source_id": "src_0005",
+      "storage_uri": "s3://patricius-proxy-sources/src_0005.xlsx"
+    }
+  ],
+  "labeling_workflow": {
+    "adjudication_status": "not_required",
+    "primary_labeler_status": "completed",
+    "reviewer_status": "completed"
+  },
+  "notes": "Scaled proxy package metadata.",
+  "package_id": "pkg_0041",
+  "period_end_date": "2026-03-30",
+  "quality_flags": [],
+  "received_at": "2026-03-06T16:58:05.569282+00:00",
+  "schema_version": "1.0",
+  "source_email_id": "email_0041",
+  "source_ids": [
+    "src_0002",
+    "src_0003",
+    "src_0004",
+    "src_0005"
+  ],
+  "variant_tags": [
+    "scaled",
+    "follow_up"
+  ]
+}

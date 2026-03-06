@@ -1,0 +1,35 @@
+{
+  "deal_id": "deal_scale_015",
+  "files": [
+    {
+      "checksum": "91e67454f9052911fe55c97345506abec93dfca3ecb63d5e18816b2aa211294d",
+      "doc_type": "PDF",
+      "file_id": "file_0045_01",
+      "filename": "file_0045_01.pdf",
+      "pages_or_sheets": 10,
+      "source_id": "src_0006",
+      "storage_uri": "s3://patricius-proxy-sources/src_0006.pdf"
+    }
+  ],
+  "labeling_workflow": {
+    "adjudication_status": "not_required",
+    "primary_labeler_status": "completed",
+    "reviewer_status": "completed"
+  },
+  "notes": "Scaled proxy package metadata.",
+  "package_id": "pkg_0045_var_missing_schedule",
+  "period_end_date": "2026-03-30",
+  "quality_flags": [],
+  "received_at": "2026-03-06T17:02:05.569282+00:00",
+  "schema_version": "1.0",
+  "source_email_id": "email_0045",
+  "source_ids": [
+    "src_0006"
+  ],
+  "variant_tags": [
+    "follow_up",
+    "missing_schedule",
+    "scaled",
+    "synthetic_stress"
+  ]
+}

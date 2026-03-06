@@ -1,0 +1,7 @@
+[
+  {"category": "classification_errors", "count": 2},
+  {"category": "extraction_errors", "count": 4},
+  {"category": "normalization_errors", "count": 1},
+  {"category": "evidence_link_errors", "count": 1},
+  {"category": "period_alignment_errors", "count": 0}
+]

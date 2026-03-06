@@ -1,0 +1,37 @@
+{
+  "traces": [
+    {
+      "trace_id": "tr_pkg_0001_revenue_total",
+      "package_id": "pkg_0001",
+      "concept_id": "revenue_total",
+      "normalized_value": 12500000.0,
+      "confidence": 0.99,
+      "doc_id": "file_0001_01",
+      "locator_type": "cell",
+      "locator_value": "B10",
+      "source_snippet": "Revenue Total: 12,500,000.00"
+    },
+    {
+      "trace_id": "tr_pkg_0002_ebitda_reported",
+      "package_id": "pkg_0002",
+      "concept_id": "ebitda_reported",
+      "normalized_value": 2597000.0,
+      "confidence": 0.99,
+      "doc_id": "file_0002_01",
+      "locator_type": "paragraph",
+      "locator_value": "p3:l2",
+      "source_snippet": "EBITDA (reported) is 2,597,000"
+    },
+    {
+      "trace_id": "tr_pkg_0010_interest_expense",
+      "package_id": "pkg_0010",
+      "concept_id": "interest_expense",
+      "normalized_value": null,
+      "confidence": 0.72,
+      "doc_id": "file_0010_02",
+      "locator_type": "paragraph",
+      "locator_value": "p5:l4",
+      "source_snippet": "Interest schedule missing in submitted package"
+    }
+  ]
+}

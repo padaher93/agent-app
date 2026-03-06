@@ -1,0 +1,63 @@
+{
+  "deal_id": "deal_bracken",
+  "files": [
+    {
+      "checksum": "2f5d762bf95e041955e0869b5ff84e939a3453b0d81a7c7997b980186778409d",
+      "doc_type": "PDF",
+      "file_id": "file_0047_01",
+      "filename": "file_0047_01.pdf",
+      "pages_or_sheets": 11,
+      "source_id": "src_0008",
+      "storage_uri": "s3://patricius-proxy-sources/src_0008.pdf"
+    },
+    {
+      "checksum": "65bb14653b5233efb7f8976b25911831c07fca06330df80c1e85ea996ea1adee",
+      "doc_type": "XLSX",
+      "file_id": "file_0047_02",
+      "filename": "file_0047_02.xlsx",
+      "pages_or_sheets": 11,
+      "source_id": "src_0009",
+      "storage_uri": "s3://patricius-proxy-sources/src_0009.xlsx"
+    },
+    {
+      "checksum": "627dbaca8bb28a62a20138d537864ed1beb623ac07039cf3a39100ab8126fdba",
+      "doc_type": "PDF",
+      "file_id": "file_0047_03",
+      "filename": "file_0047_03.pdf",
+      "pages_or_sheets": 11,
+      "source_id": "src_0010",
+      "storage_uri": "s3://patricius-proxy-sources/src_0010.pdf"
+    },
+    {
+      "checksum": "8187800c6c54501d5dbaba3181a7cbdaa72a872cfed6a55059dd9836ead1c7a6",
+      "doc_type": "XLSX",
+      "file_id": "file_0047_04",
+      "filename": "file_0047_04.xlsx",
+      "pages_or_sheets": 11,
+      "source_id": "src_0011",
+      "storage_uri": "s3://patricius-proxy-sources/src_0011.xlsx"
+    }
+  ],
+  "labeling_workflow": {
+    "adjudication_status": "not_required",
+    "primary_labeler_status": "completed",
+    "reviewer_status": "completed"
+  },
+  "notes": "Scaled proxy package metadata.",
+  "package_id": "pkg_0047",
+  "period_end_date": "2026-06-30",
+  "quality_flags": [],
+  "received_at": "2026-03-06T17:04:05.569282+00:00",
+  "schema_version": "1.0",
+  "source_email_id": "email_0047",
+  "source_ids": [
+    "src_0008",
+    "src_0009",
+    "src_0010",
+    "src_0011"
+  ],
+  "variant_tags": [
+    "scaled",
+    "follow_up"
+  ]
+}
