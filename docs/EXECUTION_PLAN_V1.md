@@ -25,6 +25,7 @@ Scope remains locked to:
 7. Phase 2 deterministic agent workflow + append-only integrity-checked logs implemented.
 8. Phase 3 internal API + email adapter implemented with async lifecycle and idempotent ingest.
 9. Phase 4 desktop tri-panel shell implemented with trace-anchored evidence/log views and user-resolution flow.
+10. Design-partner readiness bundle tooling implemented for launch-by-metric operations.
 
 ## Phase Plan
 

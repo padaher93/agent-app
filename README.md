@@ -83,6 +83,16 @@ python tools/generate_trust_artifact.py \
   --output reports/design_partner/trust_artifact.md
 ```
 
+Build design-partner readiness package bundle:
+
+```bash
+python tools/build_design_partner_package.py \
+  --eval-report dataset/eval/reports/latest.json \
+  --history-dir dataset/eval/history \
+  --traces-file dataset/traces/sample_traces.json \
+  --output-dir reports/design_partner/readiness_bundle
+```
+
 Run Phase 3 internal API:
 
 ```bash
