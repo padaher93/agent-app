@@ -83,6 +83,25 @@ python tools/generate_trust_artifact.py \
   --output reports/design_partner/trust_artifact.md
 ```
 
+Run Phase 3 internal API:
+
+```bash
+python tools/run_internal_api.py \
+  --host 127.0.0.1 \
+  --port 8080 \
+  --db-path runtime/internal_api.sqlite3 \
+  --labels-dir dataset/labels/proxy_v1_full \
+  --events-log runtime/agent_events.jsonl
+```
+
+Email adapter ingest to internal API:
+
+```bash
+python tools/email_adapter_ingest.py \
+  --email-json dataset/examples/inbound_email.sample.json \
+  --endpoint http://127.0.0.1:8080/internal/v1/packages:ingest
+```
+
 ## Repo policy for source files
 
 - Raw public documents are not committed to git.

@@ -1,0 +1,29 @@
+{
+  "from": "ops@borrower.com",
+  "message_id": "email_external_0001",
+  "deal_id": "deal_alderon",
+  "period_end_date": "2025-12-31",
+  "received_at": "2026-03-06T12:30:00+00:00",
+  "attachments": [
+    {
+      "file_id": "file_ext_01",
+      "source_id": "src_ext_0001",
+      "doc_type": "PDF",
+      "filename": "borrower_package.pdf",
+      "storage_uri": "s3://patricius-inbound/borrower_package.pdf",
+      "checksum": "c1a2b3c4d5e6",
+      "pages_or_sheets": 18
+    },
+    {
+      "file_id": "file_ext_02",
+      "source_id": "src_ext_0002",
+      "doc_type": "XLSX",
+      "filename": "financials.xlsx",
+      "storage_uri": "s3://patricius-inbound/financials.xlsx",
+      "checksum": "f6e5d4c3b2a1",
+      "pages_or_sheets": 6
+    }
+  ],
+  "variant_tags": ["external_email"],
+  "quality_flags": []
+}
