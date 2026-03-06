@@ -3,7 +3,7 @@
 Version: 1.0  
 Date: 2026-03-06  
 Owner: Product + Engineering  
-Status: Active (Phase 1 implemented, Phase 2 started)
+Status: Active (Phase 1 implemented, Phase 2 completed)
 
 ## Summary
 Execute V1 in four build phases after the dataset foundation.
@@ -21,6 +21,8 @@ Scope remains locked to:
 3. `dataset_v1.0` freeze created.
 4. Eval harness and trust artifact generation operational.
 5. Validation and tests passing.
+6. Phase 1 extraction baseline and CI gate workflow implemented.
+7. Phase 2 deterministic agent workflow + append-only integrity-checked logs implemented.
 
 ## Phase Plan
 

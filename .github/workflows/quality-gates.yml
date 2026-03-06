@@ -50,6 +50,20 @@ jobs:
             --pipeline-version ci \
             --required-streak 1
 
+      - name: Run phase 2 agent workflow
+        run: |
+          python tools/run_agent_workflow.py \
+            --packages-dir dataset/packages/proxy_v1_full \
+            --labels-dir dataset/labels/proxy_v1_full \
+            --output-file dataset/predictions/ci_workflow_predictions.json \
+            --events-log dataset/eval/ci_agent_events.jsonl \
+            --max-retries 2 \
+            --truncate-log
+
+      - name: Verify event log integrity
+        run: |
+          python tools/check_event_log_integrity.py --events-log dataset/eval/ci_agent_events.jsonl
+
       - name: Run tests
         run: |
           pytest -q

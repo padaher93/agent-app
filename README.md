@@ -70,6 +70,9 @@ python tools/run_agent_workflow.py \
   --output-file dataset/predictions/workflow_predictions.json \
   --events-log dataset/eval/agent_events.jsonl \
   --truncate-log
+
+python tools/check_event_log_integrity.py \
+  --events-log dataset/eval/agent_events.jsonl
 ```
 
 Generate trust artifact:

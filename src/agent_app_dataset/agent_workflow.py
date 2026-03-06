@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timezone
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -10,6 +11,12 @@ from .policy import classify_status
 
 
 WORKFLOW_PHASES = ("classify", "extract", "verify", "publish")
+TERMINAL_STATUSES = ("verified", "candidate_flagged", "unresolved")
+ALLOWED_TRANSITIONS = {
+    "verified": {"verified", "unresolved"},
+    "candidate_flagged": {"candidate_flagged", "verified", "unresolved"},
+    "unresolved": {"unresolved"},
+}
 
 
 @dataclass(frozen=True)
@@ -23,6 +30,10 @@ class WorkflowSummary:
     rows: int
     retries: int
     events: int
+
+
+class WorkflowTransitionError(ValueError):
+    pass
 
 
 def _utc_now() -> str:
@@ -46,11 +57,90 @@ def _event(
     }
 
 
+def _compute_event_hash(record: dict[str, Any]) -> str:
+    hash_payload = dict(record)
+    hash_payload.pop("event_hash", None)
+    canonical = json.dumps(hash_payload, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def check_log_integrity(log_path: Path) -> list[str]:
+    if not log_path.exists() or log_path.stat().st_size == 0:
+        return []
+
+    issues: list[str] = []
+    prev_seq = 0
+    prev_hash = "GENESIS"
+
+    with log_path.open("r", encoding="utf-8") as f:
+        for line_no, line in enumerate(f, start=1):
+            raw = line.strip()
+            if not raw:
+                continue
+
+            try:
+                record = json.loads(raw)
+            except json.JSONDecodeError as exc:
+                issues.append(f"line {line_no}: invalid JSON ({exc})")
+                continue
+
+            required = ("sequence_id", "previous_hash", "event_hash")
+            missing = [key for key in required if key not in record]
+            if missing:
+                issues.append(f"line {line_no}: missing integrity fields {missing}")
+                continue
+
+            sequence_id = record["sequence_id"]
+            if not isinstance(sequence_id, int):
+                issues.append(f"line {line_no}: sequence_id must be int")
+                continue
+
+            expected_seq = prev_seq + 1
+            if sequence_id != expected_seq:
+                issues.append(
+                    f"line {line_no}: sequence_id {sequence_id} does not match expected {expected_seq}"
+                )
+
+            if record["previous_hash"] != prev_hash:
+                issues.append(f"line {line_no}: previous_hash mismatch")
+
+            expected_hash = _compute_event_hash(record)
+            if record["event_hash"] != expected_hash:
+                issues.append(f"line {line_no}: event_hash mismatch")
+
+            prev_seq = sequence_id
+            prev_hash = record["event_hash"]
+
+    return issues
+
+
 def _append_events(log_path: Path, events: list[dict[str, Any]]) -> None:
+    issues = check_log_integrity(log_path)
+    if issues:
+        raise ValueError("Event log integrity check failed before append: " + "; ".join(issues))
+
+    last_seq = 0
+    last_hash = "GENESIS"
+    if log_path.exists() and log_path.stat().st_size > 0:
+        with log_path.open("r", encoding="utf-8") as f:
+            for line in f:
+                raw = line.strip()
+                if not raw:
+                    continue
+                record = json.loads(raw)
+                last_seq = int(record["sequence_id"])
+                last_hash = str(record["event_hash"])
+
     log_path.parent.mkdir(parents=True, exist_ok=True)
     with log_path.open("a", encoding="utf-8") as f:
         for event in events:
-            f.write(json.dumps(event, sort_keys=True) + "\n")
+            last_seq += 1
+            record = dict(event)
+            record["sequence_id"] = last_seq
+            record["previous_hash"] = last_hash
+            record["event_hash"] = _compute_event_hash(record)
+            f.write(json.dumps(record, sort_keys=True) + "\n")
+            last_hash = record["event_hash"]
 
 
 def _verifier_objections(row: dict[str, Any]) -> list[str]:
@@ -67,6 +157,16 @@ def _verifier_objections(row: dict[str, Any]) -> list[str]:
     return objections
 
 
+def _transition_status(current_status: str, next_status: str) -> str:
+    if current_status not in TERMINAL_STATUSES:
+        raise WorkflowTransitionError(f"invalid current status: {current_status}")
+    if next_status not in TERMINAL_STATUSES:
+        raise WorkflowTransitionError(f"invalid next status: {next_status}")
+    if next_status not in ALLOWED_TRANSITIONS[current_status]:
+        raise WorkflowTransitionError(f"illegal status transition: {current_status} -> {next_status}")
+    return next_status
+
+
 def _review_row(
     row: dict[str, Any],
     max_retries: int,
@@ -74,10 +174,28 @@ def _review_row(
 ) -> tuple[dict[str, Any], list[dict[str, Any]], int]:
     events: list[dict[str, Any]] = []
     retries = 0
+    objection_reasons: list[str] = []
+    attempt_history: list[dict[str, Any]] = []
+
+    current_status = str(row.get("status", "unresolved"))
+    if current_status not in TERMINAL_STATUSES:
+        row["hard_blockers"] = sorted(set(row.get("hard_blockers", []) + ["invalid_initial_status"]))
+        current_status = "unresolved"
+    row["status"] = current_status
 
     # Independent verifier loop with capped retries.
     while retries <= max_retries:
+        attempt_status = str(row.get("status"))
+        attempt_confidence = row.get("confidence")
         objections = _verifier_objections(row)
+        objection_reasons.extend(objections)
+        attempt_record = {
+            "attempt": retries,
+            "status_before": attempt_status,
+            "confidence_before": attempt_confidence,
+            "objections": objections,
+        }
+
         events.append(
             _event(
                 event_type="verify_attempt",
@@ -94,10 +212,13 @@ def _review_row(
         )
 
         if objections:
-            row["status"] = "unresolved"
+            row["status"] = _transition_status(str(row.get("status")), "unresolved")
             row["hard_blockers"] = sorted(set(row.get("hard_blockers", []) + objections))
             row["final_resolver"] = "agent_4"
             row["retry_count"] = retries
+            attempt_record["decision"] = "reject"
+            attempt_record["status_after"] = row["status"]
+            attempt_history.append(attempt_record)
             events.append(
                 _event(
                     event_type="verify_rejected",
@@ -107,14 +228,18 @@ def _review_row(
                     payload={"reason": objections},
                 )
             )
-            return row, events, retries
+            break
 
         # Candidate rows can be challenged once/twice if confidence is below verified threshold.
         if row.get("status") == "candidate_flagged" and retries < max_retries:
             retries += 1
             boosted = min(0.99, float(row.get("confidence", 0.0)) + 0.03)
             row["confidence"] = round(boosted, 4)
-            row["status"] = classify_status(row["confidence"], row.get("hard_blockers", []))
+            next_status = classify_status(row["confidence"], row.get("hard_blockers", []))
+            row["status"] = _transition_status(str(row.get("status")), next_status)
+            attempt_record["decision"] = "challenge"
+            attempt_record["status_after"] = row["status"]
+            attempt_history.append(attempt_record)
             events.append(
                 _event(
                     event_type="verify_challenge",
@@ -132,6 +257,9 @@ def _review_row(
 
         row["final_resolver"] = "agent_4"
         row["retry_count"] = retries
+        attempt_record["decision"] = "accept"
+        attempt_record["status_after"] = row.get("status")
+        attempt_history.append(attempt_record)
         events.append(
             _event(
                 event_type="verify_accepted",
@@ -141,11 +269,26 @@ def _review_row(
                 payload={"status": row.get("status"), "confidence": row.get("confidence")},
             )
         )
-        return row, events, retries
+        break
 
-    row["status"] = "unresolved"
+    row["status"] = str(row.get("status", "unresolved"))
+    if row["status"] not in TERMINAL_STATUSES:
+        row["status"] = "unresolved"
+        objection_reasons.append("invalid_terminal_status")
+
     row["final_resolver"] = "agent_4"
     row["retry_count"] = retries
+    row["max_retries"] = max_retries
+    row["objection_reasons"] = sorted(set(objection_reasons))
+    row["verification"] = {
+        "attempts": attempt_history,
+        "retry_count": retries,
+        "max_retries": max_retries,
+        "final_status": row["status"],
+        "objections": row["objection_reasons"],
+        "resolver": "agent_4",
+    }
+
     return row, events, retries
 
 

@@ -64,7 +64,7 @@ def main() -> int:
             print(error)
         return 1
 
-    history_file = history_dir / f"{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}.json"
+    history_file = history_dir / f"{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')}.json"
     write_json(history_file, report)
 
     streak = consecutive_passes(history_dir)

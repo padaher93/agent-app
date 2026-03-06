@@ -96,6 +96,12 @@ python tools/run_agent_workflow.py \
   --truncate-log
 ```
 
+Verify event-log integrity (hash chain + sequence):
+
+```bash
+python tools/check_event_log_integrity.py --events-log dataset/eval/agent_events.jsonl
+```
+
 8. Generate design-partner trust artifact:
 
 ```bash
