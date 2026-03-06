@@ -91,7 +91,14 @@ python tools/run_internal_api.py \
   --port 8080 \
   --db-path runtime/internal_api.sqlite3 \
   --labels-dir dataset/labels/proxy_v1_full \
-  --events-log runtime/agent_events.jsonl
+  --events-log runtime/agent_events.jsonl \
+  --ui-dir src/agent_app_dataset/ui
+```
+
+Desktop shell URL after startup:
+
+```text
+http://127.0.0.1:8080/app/
 ```
 
 Email adapter ingest to internal API:

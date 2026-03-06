@@ -148,6 +148,21 @@ class InternalStore:
             ).fetchone()
         return self._row_to_package(row)
 
+    def list_packages(self) -> list[PackageRecord]:
+        with self._connect() as conn:
+            rows = conn.execute(
+                """
+                SELECT * FROM packages
+                ORDER BY deal_id ASC, period_end_date DESC, created_at DESC
+                """
+            ).fetchall()
+        records: list[PackageRecord] = []
+        for row in rows:
+            record = self._row_to_package(row)
+            if record is not None:
+                records.append(record)
+        return records
+
     def update_package_status(
         self,
         package_id: str,
@@ -262,6 +277,17 @@ class InternalStore:
             "row": json.loads(row["row_json"]),
             "created_at": row["created_at"],
         }
+
+    def update_trace_row(self, trace_id: str, row_payload: dict[str, Any]) -> None:
+        with self._connect() as conn:
+            conn.execute(
+                """
+                UPDATE traces
+                SET row_json = ?
+                WHERE trace_id = ?
+                """,
+                (json.dumps(row_payload, sort_keys=True), trace_id),
+            )
 
     def _row_to_package(self, row: sqlite3.Row | None) -> PackageRecord | None:
         if row is None:

@@ -143,6 +143,11 @@ def _append_events(log_path: Path, events: list[dict[str, Any]]) -> None:
             last_hash = record["event_hash"]
 
 
+def append_events(log_path: Path, events: list[dict[str, Any]]) -> None:
+    """Public append-only event writer with integrity chaining."""
+    _append_events(log_path, events)
+
+
 def _verifier_objections(row: dict[str, Any]) -> list[str]:
     objections: list[str] = []
     evidence = row.get("evidence", {})

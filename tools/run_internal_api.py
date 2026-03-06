@@ -21,6 +21,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--db-path", default="runtime/internal_api.sqlite3")
     parser.add_argument("--labels-dir", default="dataset/labels/proxy_v1_full")
     parser.add_argument("--events-log", default="runtime/agent_events.jsonl")
+    parser.add_argument("--ui-dir", default="src/agent_app_dataset/ui")
     return parser.parse_args()
 
 
@@ -31,6 +32,7 @@ def main() -> int:
         db_path=Path(args.db_path),
         labels_dir=Path(args.labels_dir),
         events_log_path=Path(args.events_log),
+        ui_dir=Path(args.ui_dir),
     )
 
     uvicorn.run(app, host=args.host, port=args.port, log_level="info")
