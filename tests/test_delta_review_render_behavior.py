@@ -257,6 +257,131 @@ def test_render_intake_review_detail_avoids_taxonomy_stack_and_delta_case_label(
     _run_render_script(script)
 
 
+def test_render_queue_error_replaces_stale_detail_with_error_state() -> None:
+    render_module = (
+        Path(__file__).resolve().parents[1]
+        / "src"
+        / "agent_app_dataset"
+        / "ui"
+        / "delta-review-render.js"
+    ).as_uri()
+
+    script = textwrap.dedent(
+        f"""
+        import {{ renderScreen }} from "{render_module}";
+
+        function makeEl() {{
+          return {{
+            textContent: "",
+            innerHTML: "",
+            value: "",
+            checked: false,
+            disabled: false,
+            hidden: false,
+            style: {{ display: "" }},
+            addEventListener() {{}},
+            querySelectorAll() {{ return []; }},
+          }};
+        }}
+
+        const elements = {{
+          dealTitle: makeEl(),
+          dealSwitcher: makeEl(),
+          comparisonPair: makeEl(),
+          comparisonNote: makeEl(),
+          summaryCounts: makeEl(),
+          periodRail: makeEl(),
+          baselineSwitcher: makeEl(),
+          baselineControl: makeEl(),
+          includeResolved: makeEl(),
+          queueContent: makeEl(),
+          detailContent: makeEl(),
+        }};
+
+        const staleItem = {{
+          id: "rq_stale_net_income",
+          case_mode: "verified_review",
+          concept_maturity: "grounded",
+          case_certainty: "grounded_fact",
+          case_certainty_label: "Grounded fact",
+          headline: "Net Income down 1.0 percent versus prior period",
+          metric_label: "Net Income",
+          previous_value_display: "980,000",
+          current_value_display: "970,000",
+          delta_display: "-10,000 (-1.0%)",
+          current_search_state: "found_verified",
+          grounded_implication: "Evidence is sufficient for period review.",
+          why_it_matters: "Evidence is sufficient for period review.",
+          primary_action: {{ id: "view_source_evidence", label: "View source evidence" }},
+          available_actions: [{{ id: "view_source_evidence", label: "View source evidence" }}],
+          trace_ids: [],
+          proof_compare_mode: "baseline_vs_current",
+          evidence: {{ baseline: {{}}, current: {{}} }},
+        }};
+
+        const state = {{
+          deals: [{{ deal_id: "deal_northstar", display_name: "Northstar Credit Partners" }}],
+          currentDealId: "deal_northstar",
+          currentPeriodId: "deal_northstar_period_2025_09_30",
+          baselinePeriodId: "",
+          includeResolved: false,
+          loading: {{ queue: false }},
+          errors: {{ queue: "Internal Server Error" }},
+          traceEvidenceCache: new Map(),
+          traceHistoryCache: new Map(),
+          queuePayload: {{
+            product_mode: "delta_review",
+            product_state: {{ screen_mode: "delta_review" }},
+            deal: {{ id: "deal_northstar", name: "Northstar Credit Partners" }},
+            periods: {{
+              current: {{ id: "deal_northstar_period_2025_09_30", label: "Sep 2025" }},
+              baseline: {{ id: "deal_northstar_period_2025_06_30", label: "Jun 2025" }},
+              comparison_basis: "prior_verified_period"
+            }},
+            period_options: [],
+            summary: {{ blockers: 0, review_signals: 2, verified_changes: 3, total: 5 }},
+            screen_taxonomy: {{
+              summary_keys: ["blockers", "review_signals", "verified_changes"],
+              section_order: ["blockers", "review_signals", "verified_changes"],
+              section_labels: {{
+                blockers: "Blockers",
+                review_signals: "Review Signals",
+                verified_changes: "Verified Changes"
+              }}
+            }},
+            items: [staleItem]
+          }},
+          selectedItemId: staleItem.id,
+          activeDraft: null,
+          activeAnalystNote: null,
+        }};
+
+        const handlers = {{
+          onPeriodChange() {{}},
+          onItemSelect() {{}},
+          onAction() {{}},
+          onOpenPreview() {{}},
+          onDraftChange() {{}},
+          onAnalystNoteChange() {{}},
+        }};
+
+        renderScreen(state, elements, handlers);
+        const queueHtml = elements.queueContent.innerHTML;
+        const detailHtml = elements.detailContent.innerHTML;
+        if (!queueHtml.includes("Queue request failed")) {{
+          throw new Error("queue pane should show queue error state");
+        }}
+        if (!detailHtml.includes("Queue request failed")) {{
+          throw new Error("detail pane should replace stale case with queue error state");
+        }}
+        if (detailHtml.includes("Net Income down 1.0 percent versus prior period")) {{
+          throw new Error("detail pane should not keep stale selected case when queue errors");
+        }}
+        """
+    )
+    _run_render_script(script)
+
+
 def test_render_review_reason_block_hidden_when_no_concrete_reason() -> None:
     render_module = (
         Path(__file__).resolve().parents[1]

@@ -1072,7 +1072,14 @@ export function renderScreen(state, elements, handlers) {
     queueContent.innerHTML = renderQueueGroups(items, selectedItemId, { screenMode, taxonomy });
   }
 
-  if (!queuePayload && state.loading.queue) {
+  if (state.errors.queue) {
+    detailContent.innerHTML = `
+      <div class="dr-empty">
+        <p class="dr-empty-title">Queue request failed</p>
+        <p class="dr-empty-copy">${escapeHtml(state.errors.queue)}</p>
+      </div>
+    `;
+  } else if (!queuePayload && state.loading.queue) {
     detailContent.innerHTML = `
       <div class="dr-loading">
         <div class="dr-loading-row"><span class="dr-spinner"></span>Loading case...</div>

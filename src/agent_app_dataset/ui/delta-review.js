@@ -189,7 +189,7 @@ async function start() {
     });
   }
 
-  async function loadReviewQueue({ preserveSelection = true } = {}) {
+  async function loadReviewQueue({ preserveSelection = true, allowBaselineResetRetry = true } = {}) {
     const state = store.getState();
     if (!state.currentDealId || !state.currentPeriodId) return;
     const requestSeq = ++queueRequestSeq;
@@ -223,9 +223,28 @@ async function start() {
       await Promise.all([ensureSelectedHistoryLoaded(), ensureSelectedProofLoaded()]);
     } catch (error) {
       if (requestSeq !== queueRequestSeq) return;
+      const message = error instanceof Error ? error.message : "review_queue_failed";
+      const shouldAutoResetBaseline =
+        allowBaselineResetRetry &&
+        Boolean(state.baselinePeriodId) &&
+        (message === "baseline_period_cannot_match_current" || message === "baseline_period_not_found");
+
+      if (shouldAutoResetBaseline) {
+        store.setState({
+          baselinePeriodId: "",
+          errors: { queue: "" },
+        });
+        void loadReviewQueue({ preserveSelection: false, allowBaselineResetRetry: false });
+        return;
+      }
+
       store.setState({
+        queuePayload: null,
+        selectedItemId: "",
+        activeDraft: null,
+        activeAnalystNote: null,
         loading: { queue: false },
-        errors: { queue: error instanceof Error ? error.message : "review_queue_failed" },
+        errors: { queue: message },
       });
     }
   }
@@ -317,6 +336,7 @@ async function start() {
     if (!periodId) return;
     store.setState({
       currentPeriodId: periodId,
+      baselinePeriodId: "",
       selectedItemId: "",
       activeDraft: null,
       activeAnalystNote: null,
