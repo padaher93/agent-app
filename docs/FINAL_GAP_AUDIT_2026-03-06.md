@@ -66,8 +66,8 @@ Implemented:
 Files:
 - `src/agent_app_dataset/internal_store.py`
 - `src/agent_app_dataset/internal_api.py`
-- `src/agent_app_dataset/ui/app.js`
-- `src/agent_app_dataset/ui/app.css`
+- `src/agent_app_dataset/ui/delta-review.js`
+- `src/agent_app_dataset/ui/delta-review.css`
 - `tests/test_deal_management.py`
 
 ### 4) Document-grade evidence viewers
@@ -82,9 +82,9 @@ Implemented:
 
 Files:
 - `src/agent_app_dataset/internal_api.py`
-- `src/agent_app_dataset/ui/app.js`
-- `src/agent_app_dataset/ui/app.css`
-- `src/agent_app_dataset/ui/index.html`
+- `src/agent_app_dataset/ui/delta-review.js`
+- `src/agent_app_dataset/ui/delta-review.css`
+- `src/agent_app_dataset/ui/delta-review.html`
 - `tests/test_document_viewer_api.py`
 
 ### 5) Account onboarding + magic-link + password flow

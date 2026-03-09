@@ -315,15 +315,15 @@ def test_repo_ui_assets_are_served(tmp_path: Path) -> None:
 
     index_resp = client.get("/app/")
     assert index_resp.status_code == 200
-    assert "Patricius Review Console" in index_resp.text
+    assert "/app/delta-review.html" in index_resp.text
 
-    css_resp = client.get("/app/app.css")
+    css_resp = client.get("/app/delta-review.css")
     assert css_resp.status_code == 200
-    assert "workspace" in css_resp.text
+    assert ".dr-root" in css_resp.text
 
-    js_resp = client.get("/app/app.js")
+    js_resp = client.get("/app/delta-review.js")
     assert js_resp.status_code == 200
-    assert "materialityForRow" in js_resp.text
+    assert "createApiClient" in js_resp.text
 
 
 def test_same_period_creates_incrementing_period_revision(tmp_path: Path) -> None:

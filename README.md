@@ -186,13 +186,13 @@ Runtime profiles:
 Desktop shell URL after startup:
 
 ```text
-http://127.0.0.1:8080/app/
+http://127.0.0.1:8080/app/delta-review.html
 ```
 
 Workspace-scoped shell URL:
 
 ```text
-http://127.0.0.1:8080/app/?workspace=ws_default
+http://127.0.0.1:8080/app/delta-review.html?workspace=ws_default
 ```
 
 Email adapter ingest to internal API:

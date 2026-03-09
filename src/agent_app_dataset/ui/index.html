@@ -3,94 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Patricius Review Console</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="/app/app.css" />
+    <title>PATRICIUS</title>
+    <meta http-equiv="refresh" content="0;url=/app/delta-review.html" />
+    <script>
+      const next = `/app/delta-review.html${window.location.search || ""}${window.location.hash || ""}`;
+      window.location.replace(next);
+    </script>
   </head>
   <body>
-    <div class="root">
-      <header class="topBar">
-        <h1 class="brand">PATRICIUS</h1>
-        <div class="topActions">
-          <span id="user-pill" class="userPill hidden"></span>
-          <button id="refresh-button" class="settingsButton" type="button">Refresh</button>
-          <button id="logout-button" class="settingsButton hidden" type="button">Logout</button>
-        </div>
-      </header>
-
-      <main class="body">
-        <aside class="sidebar" aria-label="Deals">
-          <div class="sidebarMeta">
-            <p class="sidebarButtonMeta" id="portfolio-updated-label">updated at unavailable</p>
-            <p class="sidebarButtonMeta" id="portfolio-coverage-label">Deals 0/0 · Blockers 0</p>
-          </div>
-          <button id="create-deal-button" class="createDealButton" type="button">Create new deal</button>
-          <p class="sidebarCaption">Deals</p>
-          <div id="deal-tree" class="dealsList"></div>
-        </aside>
-
-        <section class="main">
-          <div id="create-deal-stage" class="createDealStage hidden">
-            <div id="create-deal-stage-content"></div>
-          </div>
-          <div id="main-grid" class="grid">
-            <article class="pane" data-testid="pane-what">
-              <header class="paneHeader">
-                <p class="paneName">Takeaways</p>
-              </header>
-              <div id="what-content" class="paneBody"></div>
-            </article>
-
-            <article class="pane" data-testid="pane-tasks">
-              <header class="paneHeader">
-                <p class="paneName">What's Next</p>
-              </header>
-              <div id="tasks-content" class="paneBody"></div>
-            </article>
-
-            <article class="pane" data-testid="pane-data">
-              <header class="paneHeader">
-                <p class="paneName">Data</p>
-              </header>
-              <div id="data-content" class="paneBody"></div>
-            </article>
-
-            <article class="pane" data-testid="pane-proof">
-              <header class="paneHeader">
-                <p class="paneName">Proof</p>
-                <div class="proofHeaderRight">
-                  <div class="proofModeToggle" role="tablist" aria-label="Proof mode">
-                    <button id="proof-mode-evidence" class="proofModeButton" type="button" role="tab">Evidence</button>
-                    <button id="proof-mode-audit" class="proofModeButton" type="button" role="tab">Audit</button>
-                  </div>
-                  <span id="proof-quality-chip" class="proofPackQualityChip">0/0 verified</span>
-                </div>
-              </header>
-              <div class="paneBody">
-                <div class="proofLayout">
-                  <div id="proof-citations" class="proofCitations" tabindex="-1"></div>
-                  <div id="proof-viewer-stack" class="proofViewerStack">
-                    <div id="evidence-content" class="proofViewer"></div>
-                    <div id="logs-content" class="proofLogs"></div>
-                  </div>
-                </div>
-              </div>
-            </article>
-          </div>
-        </section>
-      </main>
-
-      <div id="auth-overlay" class="auth-overlay hidden">
-        <div id="auth-card" class="auth-card"></div>
-      </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="/app/app.js" type="module"></script>
+    <p>Redirecting to Delta Review…</p>
+    <p><a href="/app/delta-review.html">Open Delta Review</a></p>
   </body>
 </html>
