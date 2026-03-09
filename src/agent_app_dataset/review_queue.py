@@ -1099,6 +1099,10 @@ EXTRACTION_REVIEW_REASON_DEFAULTS: dict[str, tuple[str, str]] = {
         "Current package missing exact support",
         "No exact source anchor was found in the current package.",
     ),
+    "variance_above_materiality_policy": (
+        "Variance exceeds materiality policy",
+        "Current variance exceeded the configured minor-variance policy for this concept.",
+    ),
 }
 
 EXTRACTION_REVIEW_REASON_ALIASES = {
@@ -1108,16 +1112,38 @@ EXTRACTION_REVIEW_REASON_ALIASES = {
 
 def _extraction_review_reason(row: dict[str, Any]) -> dict[str, str] | None:
     raw_code = str(row.get("extraction_reason_code", "")).strip().lower()
-    if not raw_code:
-        return None
-
     code = EXTRACTION_REVIEW_REASON_ALIASES.get(raw_code, raw_code)
+    label = str(row.get("extraction_reason_label", "")).strip()
+    detail = str(row.get("extraction_reason_detail", "")).strip()
+
+    if not code:
+        # Runtime rows are expected to persist explicit reason codes, but some eval/demo
+        # payloads still only carry deterministic extraction context fields.
+        match_basis = str(row.get("match_basis", "")).strip().lower()
+        source_modality = str(row.get("source_modality", "")).strip().lower()
+        expected_section_state = str(row.get("expected_section_state", "")).strip().lower()
+        uncertainty_source = str(row.get("uncertainty_source", "")).strip().lower()
+        candidate_count = _as_int(row.get("candidate_count"), default=0) or 0
+
+        if source_modality == "pdf_text":
+            code = "candidate_from_pdf_text_only"
+        elif source_modality == "narrative_text":
+            code = "candidate_from_narrative_text"
+        elif expected_section_state == "structured_locator_missing":
+            code = "exact_row_header_missing"
+        elif candidate_count >= 2 and uncertainty_source == "package_extraction":
+            code = "multiple_matching_rows"
+        elif match_basis == "label_variant_match":
+            code = "label_variant_match"
+        elif expected_section_state in {"exact_anchor_not_found", "source_document_unavailable"}:
+            code = "current_package_missing_exact_support"
+
     defaults = EXTRACTION_REVIEW_REASON_DEFAULTS.get(code)
     if defaults is None:
         return None
 
-    label = str(row.get("extraction_reason_label", "")).strip() or defaults[0]
-    detail = str(row.get("extraction_reason_detail", "")).strip() or defaults[1]
+    label = label or defaults[0]
+    detail = detail or defaults[1]
     label_lower = label.lower()
     detail_lower = detail.lower()
     if "confirmation required" in label_lower or "review lane" in label_lower:
@@ -1136,6 +1162,7 @@ def _review_reason_for_item(
     current_search_state: str,
     requirement_anchor: dict[str, Any] | None,
     current_candidate_anchor: dict[str, Any] | None,
+    materiality_decision: str | None,
 ) -> dict[str, str] | None:
     certainty = str(case_certainty or "").strip().lower()
     if certainty not in {"candidate_only", "review_signal", "conflict_detected", "missing_source"}:
@@ -1154,6 +1181,13 @@ def _review_reason_for_item(
     extraction_reason = _extraction_review_reason(row)
     if extraction_reason is not None:
         return extraction_reason
+
+    if case_mode == "review_possible_material_change" and materiality_decision == "review_signal":
+        return _reason(
+            "variance_above_materiality_policy",
+            "Variance exceeds materiality policy",
+            "Current variance exceeded the configured minor-variance policy for this concept.",
+        )
 
     if case_mode in {"review_possible_requirement", "review_possible_missing_reporting_item"} and not (
         requirement_anchor and bool(requirement_anchor.get("grounded"))
@@ -1445,34 +1479,46 @@ def _recommended_actions_for_case(
         if case_mode == "review_possible_source_conflict":
             actions = [
                 {"id": "confirm_source_of_record", "label": "Resolve conflict"},
+                {"id": "view_source_evidence", "label": "View source evidence"},
                 {"id": "prepare_borrower_follow_up", "label": "Prepare borrower follow-up"},
                 {"id": "draft_analyst_note", "label": "Draft analyst note"},
                 {"id": "mark_expected_noise", "label": "Mark as expected noise"},
                 {"id": "dismiss_after_review", "label": "Dismiss after analyst review"},
-                {"id": "view_source_evidence", "label": "View source evidence"},
                 {"id": "view_review_history", "label": "View review history"},
             ]
             return actions[0], actions
         if case_mode in {"review_possible_missing_reporting_item", "review_possible_requirement"}:
-            actions = [
-                {"id": "review_possible_requirement", "label": "Review possible requirement"},
-                {"id": "confirm_source_of_record", "label": "Confirm source of record"},
-                {"id": "prepare_borrower_follow_up", "label": "Prepare borrower follow-up"},
-                {"id": "draft_analyst_note", "label": "Draft analyst note"},
-                {"id": "mark_expected_noise", "label": "Mark as expected noise"},
-                {"id": "dismiss_after_review", "label": "Dismiss after analyst review"},
-                {"id": "view_source_evidence", "label": "View source evidence"},
-                {"id": "view_review_history", "label": "View review history"},
-            ]
+            if case_mode == "review_possible_requirement" and case_certainty == "candidate_only":
+                actions = [
+                    {"id": "confirm_source_of_record", "label": "Confirm source evidence"},
+                    {"id": "review_possible_requirement", "label": "Review possible requirement"},
+                    {"id": "view_source_evidence", "label": "View source evidence"},
+                    {"id": "prepare_borrower_follow_up", "label": "Prepare borrower follow-up"},
+                    {"id": "draft_analyst_note", "label": "Draft analyst note"},
+                    {"id": "mark_expected_noise", "label": "Mark as expected noise"},
+                    {"id": "dismiss_after_review", "label": "Dismiss after analyst review"},
+                    {"id": "view_review_history", "label": "View review history"},
+                ]
+            else:
+                actions = [
+                    {"id": "review_possible_requirement", "label": "Review possible requirement"},
+                    {"id": "confirm_source_of_record", "label": "Confirm source of record"},
+                    {"id": "view_source_evidence", "label": "View source evidence"},
+                    {"id": "prepare_borrower_follow_up", "label": "Prepare borrower follow-up"},
+                    {"id": "draft_analyst_note", "label": "Draft analyst note"},
+                    {"id": "mark_expected_noise", "label": "Mark as expected noise"},
+                    {"id": "dismiss_after_review", "label": "Dismiss after analyst review"},
+                    {"id": "view_review_history", "label": "View review history"},
+                ]
             return actions[0], actions
 
         actions = [
             {"id": "confirm_source_of_record", "label": "Confirm source evidence"},
+            {"id": "view_source_evidence", "label": "View source evidence"},
             {"id": "draft_analyst_note", "label": "Draft analyst note"},
             {"id": "prepare_borrower_follow_up", "label": "Prepare borrower follow-up"},
             {"id": "mark_expected_noise", "label": "Mark as expected noise"},
             {"id": "dismiss_after_review", "label": "Dismiss after analyst review"},
-            {"id": "view_source_evidence", "label": "View source evidence"},
             {"id": "view_review_history", "label": "View review history"},
         ]
         return actions[0], actions
@@ -1480,8 +1526,8 @@ def _recommended_actions_for_case(
     if case_mode == "investigation_conflict":
         actions = [
             {"id": "confirm_source_of_record", "label": "Resolve conflict"},
-            {"id": "draft_borrower_query", "label": "Draft borrower query"},
             {"id": "view_source_evidence", "label": "View source evidence"},
+            {"id": "draft_borrower_query", "label": "Draft borrower query"},
             {"id": "view_review_history", "label": "View review history"},
         ]
         return actions[0], actions
@@ -1523,6 +1569,29 @@ def _recommended_actions_for_case(
         {"id": "view_review_history", "label": "View review history"},
     ]
     return actions[0], actions
+
+
+def _action_hierarchy(
+    *,
+    primary_action: dict[str, Any] | None,
+    actions: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    if not actions:
+        return [], []
+    primary_id = str((primary_action or {}).get("id", "")).strip()
+    secondary: list[dict[str, Any]] = []
+    overflow: list[dict[str, Any]] = []
+    for action in actions:
+        if not isinstance(action, dict):
+            continue
+        action_id = str(action.get("id", "")).strip()
+        if primary_id and action_id == primary_id:
+            continue
+        if not secondary:
+            secondary.append(action)
+            continue
+        overflow.append(action)
+    return secondary, overflow
 
 
 def _conflict_evidence_from_anchor(anchor: dict[str, Any]) -> dict[str, Any]:
@@ -1806,6 +1875,7 @@ def build_review_queue_payload(
             current_search_state=current_search_state,
             requirement_anchor=requirement_anchor,
             current_candidate_anchor=current_candidate_anchor,
+            materiality_decision=materiality_decision,
         )
 
         group = _group_for_row(
@@ -1962,6 +2032,10 @@ def build_review_queue_payload(
             screen_mode=screen_mode,
             case_certainty=case_certainty,
         )
+        secondary_actions, overflow_actions = _action_hierarchy(
+            primary_action=primary_action,
+            actions=actions,
+        )
 
         evidence_baseline = _evidence_side(baseline_row, baseline_package) if baseline_row else _empty_evidence_side()
         evidence_current = _evidence_side(row, current_package)
@@ -2069,6 +2143,8 @@ def build_review_queue_payload(
             "why_it_matters": why_it_matters,
             "proof_state": proof_state,
             "primary_action": primary_action,
+            "secondary_actions": secondary_actions,
+            "overflow_actions": overflow_actions,
             "available_actions": actions,
             "recommended_actions": actions,
             "metric_key": concept_id,

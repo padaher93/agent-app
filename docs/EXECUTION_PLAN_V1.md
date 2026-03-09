@@ -29,6 +29,11 @@ Scope remains locked to:
 11. Runtime extraction path decoupled from label files (eval mode retained for harness only).
 12. Delta API now returns baseline/delta semantics (`prior/current/abs/pct`) and `period_revision`.
 13. Role-gated resolution, evidence preview endpoint, retention tooling, inbound gateway, and isolated `real_shadow_test` partition implemented.
+14. Trace resolution is append-only with immutable history endpoint and non-destructive correction overlays.
+15. Workspace-scoped API access, optional token auth/HTTPS enforcement, and optional at-rest payload encryption mode implemented.
+16. Eval gate supports explicit security/data-integrity incident blocking.
+17. Desktop shell now pins exact decision events and uses sheet-level XLSX viewport previews.
+18. Pre-partner readiness gate implemented for proxy-only progression while preserving production block until real shadow data exists.
 
 ## Phase Plan
 

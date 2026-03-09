@@ -28,6 +28,19 @@ Close previously identified gaps between implementation and locked V1 charter co
    - logs: 7 years with archive on prune
 8. Isolated `real_shadow_test` partition and sync tooling added.
 9. Inbound gateway service added for provider webhook ingestion path.
+10. Trace correction history is append-only and immutable:
+    - `POST /internal/v1/traces/{trace_id}:resolve` appends `trace_resolutions`
+    - `GET /internal/v1/traces/{trace_id}/history` exposes correction lineage
+11. Unresolved rows are now evidence-anchored with explicit fallback locators (no empty evidence pointers).
+12. Workspace isolation is enforced with `workspace_id` and `X-Workspace-Id` scoping on read/write APIs.
+13. Internal API security controls added:
+    - optional shared token auth (`X-Internal-Token`)
+    - optional HTTPS enforcement (`X-Forwarded-Proto=https`)
+    - optional at-rest payload encryption mode (Fernet key)
+14. Eval gate runner accepts incident input and blocks release for open security/data-integrity incidents.
+15. Desktop evidence/log fidelity upgraded:
+    - sheet-level XLSX viewport preview with highlighted target cell
+    - explicit decision-event pinning in logs for selected trace
 
 ## Primary tools
 1. `tools/run_internal_api.py`

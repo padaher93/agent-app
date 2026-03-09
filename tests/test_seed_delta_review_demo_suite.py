@@ -74,7 +74,8 @@ def test_seed_canonical_demo_deals_exposes_intake_and_delta_modes(tmp_path: Path
     assert by_metric["revenue_total"]["primary_action"]["id"] == "view_source_evidence"
     assert by_metric["revenue_total"]["materiality_policy"]["pct_minor_variance_max"] == 0.75
     assert by_metric["ebitda_adjusted"]["proof_state"] == "verified"
-    assert by_metric["ebitda_adjusted"]["review_reason_code"] is None
+    assert by_metric["ebitda_adjusted"]["review_reason_code"] == "variance_above_materiality_policy"
+    assert by_metric["ebitda_adjusted"]["review_reason_label"] == "Variance exceeds materiality policy"
     assert by_metric["ebitda_adjusted"]["display_group"] == "review_signals"
     assert by_metric["ebitda_adjusted"]["materiality_outcome"] == "review_signal"
     assert by_metric["ebitda_adjusted"]["primary_action"]["id"] == "confirm_source_of_record"
@@ -88,6 +89,18 @@ def test_seed_canonical_demo_deals_exposes_intake_and_delta_modes(tmp_path: Path
         for item in delta_payload["items"]
         if item["case_certainty"] in {"review_signal", "candidate_only", "conflict_detected", "missing_source"}
     )
+
+    seeded_note = client.get(
+        f"/internal/v1/deals/{delta['deal_id']}/periods/{delta['current_package_id']}/review_queue/items/{by_metric['ebitda_adjusted']['id']}/analyst_note"
+    )
+    assert seeded_note.status_code == 200
+    note_payload = seeded_note.json()["note"]
+    assert note_payload is not None
+    assert note_payload["concept_id"] == "ebitda_adjusted"
+    assert note_payload["author"] == "seed_operator"
+    assert note_payload["memo_ready"] is True
+    assert note_payload["export_ready"] is False
+    assert "variance" in str(note_payload["note_text"]).lower()
 
 
 def test_seed_canonical_demo_deals_is_idempotent_and_preserves_unrelated_data(tmp_path: Path) -> None:
@@ -206,6 +219,17 @@ def test_seed_northstar_followup_adds_post_sep_period_and_is_idempotent(tmp_path
     assert "/evidence-preview" in revenue_anchors[0]["preview_url"]
     assert "/evidence-preview" in revenue_anchors[1]["preview_url"]
     assert by_metric["ebitda_adjusted"]["review_reason_code"] == "exact_row_header_missing"
-    assert by_metric["ebitda_adjusted"]["primary_action"]["id"] == "review_possible_requirement"
+    assert by_metric["ebitda_adjusted"]["primary_action"]["id"] == "confirm_source_of_record"
     assert by_metric["ebitda_reported"]["proof_state"] == "verified"
     assert by_metric["ebitda_reported"]["display_group"] == "review_signals"
+
+    seeded_note = client.get(
+        "/internal/v1/deals/deal_northstar/periods/deal_northstar_period_2025_12_31/review_queue/items/rq_deal_northstar_period_2025_12_31_ebitda_adjusted/analyst_note"
+    )
+    assert seeded_note.status_code == 200
+    followup_note = seeded_note.json()["note"]
+    assert followup_note is not None
+    assert followup_note["author"] == "seed_operator"
+    assert followup_note["memo_ready"] is True
+    assert followup_note["export_ready"] is True
+    assert "provisional" in str(followup_note["note_text"]).lower()

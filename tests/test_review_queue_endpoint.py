@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from fastapi.testclient import TestClient
 
+from agent_app_dataset.auth import hash_token
 from agent_app_dataset.constants import STARTER_CONCEPT_IDS
 from agent_app_dataset.internal_api import create_app
+from agent_app_dataset.internal_store import InternalStore
 from agent_app_dataset.io_utils import write_json
 
 
@@ -302,6 +305,15 @@ def test_review_queue_shapes_and_ranks_items(tmp_path: Path) -> None:
         "confirm_alternate_source",
         "mark_item_received",
     ]
+    assert [action["id"] for action in by_metric["net_income"]["secondary_actions"]] == [
+        "confirm_alternate_source"
+    ]
+    assert [action["id"] for action in by_metric["net_income"]["overflow_actions"]] == [
+        "mark_item_received",
+        "view_reporting_requirement",
+        "copy_borrower_draft",
+        "view_review_history",
+    ]
 
     assert "revenue_total" in by_metric
     assert "source conflict" in by_metric["revenue_total"]["headline"].lower()
@@ -318,6 +330,16 @@ def test_review_queue_shapes_and_ranks_items(tmp_path: Path) -> None:
     assert by_metric["revenue_total"]["review_reason_label"] == "Source conflict across rows"
     assert "confidence" not in str(by_metric["revenue_total"]["review_reason_detail"]).lower()
     assert "%" not in str(by_metric["revenue_total"]["review_reason_detail"])
+    assert [action["id"] for action in by_metric["revenue_total"]["secondary_actions"]] == [
+        "view_source_evidence"
+    ]
+    assert [action["id"] for action in by_metric["revenue_total"]["overflow_actions"]] == [
+        "prepare_borrower_follow_up",
+        "draft_analyst_note",
+        "mark_expected_noise",
+        "dismiss_after_review",
+        "view_review_history",
+    ]
     assert len(by_metric["revenue_total"]["competing_anchors"]) == 2
     revenue_subline = str(by_metric["revenue_total"]["subline"])
     assert "12,450,000" in revenue_subline
@@ -362,9 +384,9 @@ def test_review_queue_shapes_and_ranks_items(tmp_path: Path) -> None:
     assert by_metric["ebitda_adjusted"]["concept_maturity"] == "review"
     assert by_metric["ebitda_adjusted"]["trust_tier"] == "review"
     assert by_metric["ebitda_adjusted"]["case_mode"] == "review_possible_material_change"
-    assert by_metric["ebitda_adjusted"]["review_reason_code"] is None
-    assert by_metric["ebitda_adjusted"]["review_reason_label"] is None
-    assert by_metric["ebitda_adjusted"]["review_reason_detail"] is None
+    assert by_metric["ebitda_adjusted"]["review_reason_code"] == "variance_above_materiality_policy"
+    assert by_metric["ebitda_adjusted"]["review_reason_label"] == "Variance exceeds materiality policy"
+    assert "minor-variance policy" in str(by_metric["ebitda_adjusted"]["review_reason_detail"]).lower()
     assert "confirm source evidence" in by_metric["ebitda_adjusted"]["grounded_implication"].lower()
     assert by_metric["ebitda_adjusted"]["display_group"] == "review_signals"
     assert by_metric["ebitda_adjusted"]["case_certainty"] == "review_signal"
@@ -585,7 +607,7 @@ def test_review_queue_first_package_intake_review_signal_is_investigation_framed
         or "review package evidence" in implication
     )
     assert "evidence is sufficient" not in implication
-    assert ebitda_adjusted["primary_action"]["id"] == "review_possible_requirement"
+    assert ebitda_adjusted["primary_action"]["id"] == "confirm_source_of_record"
 
 
 def test_intake_verified_review_rows_are_review_signals_not_confirmed(tmp_path: Path) -> None:
@@ -1233,3 +1255,165 @@ def test_borrower_draft_workflow_events_are_persisted(tmp_path: Path) -> None:
     assert latest["item_id"] == net_income["id"]
     assert latest["concept_id"] == "net_income"
     assert latest["concept_maturity"] == "grounded"
+
+
+def test_analyst_note_is_persisted_and_reopenable(tmp_path: Path) -> None:
+    labels_dir = tmp_path / "labels"
+    labels_dir.mkdir(parents=True, exist_ok=True)
+    db_path = tmp_path / "runtime" / "api.sqlite3"
+
+    app = create_app(
+        db_path=db_path,
+        labels_dir=labels_dir,
+        events_log_path=tmp_path / "runtime" / "events.jsonl",
+    )
+    client = TestClient(app)
+
+    deal_id = "deal_analyst_notes"
+    baseline_ingest = client.post(
+        "/internal/v1/packages:ingest",
+        json=_ingest_payload(
+            deal_id=deal_id,
+            source_email_id="baseline_analyst_note",
+            period_end_date="2025-06-30",
+            received_at="2025-07-05T12:00:00+00:00",
+        ),
+    )
+    current_ingest = client.post(
+        "/internal/v1/packages:ingest",
+        json=_ingest_payload(
+            deal_id=deal_id,
+            source_email_id="current_analyst_note",
+            period_end_date="2025-09-30",
+            received_at="2025-10-05T12:00:00+00:00",
+        ),
+    )
+    assert baseline_ingest.status_code == 200
+    assert current_ingest.status_code == 200
+    baseline_pkg = baseline_ingest.json()["package_id"]
+    current_pkg = current_ingest.json()["package_id"]
+
+    baseline_label = _build_label_payload(
+        package_id=baseline_pkg,
+        deal_id=deal_id,
+        period_end_date="2025-06-30",
+        base_values={"ebitda_adjusted": 2_610_000, "net_income": 980_000},
+    )
+    current_label = _build_label_payload(
+        package_id=current_pkg,
+        deal_id=deal_id,
+        period_end_date="2025-09-30",
+        base_values={"ebitda_adjusted": 2_450_000, "net_income": 980_000},
+        overrides={
+            "ebitda_adjusted": {
+                "expected_status": "candidate_flagged",
+                "labeler_confidence": 0.61,
+                "flags": ["row_header_not_exact"],
+                "extraction_reason_code": "exact_row_header_missing",
+                "extraction_reason_label": "Exact row header missing",
+                "evidence": {
+                    "doc_id": f"file_{current_pkg}",
+                    "doc_name": "borrower_update.xlsx",
+                    "page_or_sheet": "Sheet: Coverage",
+                    "locator_type": "paragraph",
+                    "locator_value": "p1:l5",
+                    "source_snippet": "Adjusted EBITDA candidate found but exact row header could not be anchored.",
+                },
+            }
+        },
+    )
+    write_json(labels_dir / f"{baseline_pkg}.ground_truth.json", baseline_label)
+    write_json(labels_dir / f"{current_pkg}.ground_truth.json", current_label)
+
+    assert client.post(
+        f"/internal/v1/packages/{baseline_pkg}:process",
+        json={"async_mode": False, "max_retries": 0, "extraction_mode": "eval"},
+    ).status_code == 200
+    assert client.post(
+        f"/internal/v1/packages/{current_pkg}:process",
+        json={"async_mode": False, "max_retries": 0, "extraction_mode": "eval"},
+    ).status_code == 200
+
+    queue = client.get(f"/internal/v1/deals/{deal_id}/periods/{current_pkg}/review_queue")
+    assert queue.status_code == 200
+    by_metric = {item["metric_key"]: item for item in queue.json()["items"]}
+    target = by_metric["ebitda_adjusted"]
+    assert target["concept_maturity"] == "review"
+    assert target["case_certainty"] in {"review_signal", "candidate_only"}
+
+    put_create = client.put(
+        f"/internal/v1/deals/{deal_id}/periods/{current_pkg}/review_queue/items/{target['id']}/analyst_note",
+        json={
+            "actor": "operator_ui",
+            "subject": "EBITDA extraction review",
+            "note_text": "Needs confirmation against signed borrower package table.",
+            "memo_ready": True,
+            "export_ready": False,
+            "metadata": {"source_action": "draft_analyst_note"},
+        },
+    )
+    assert put_create.status_code == 200
+    created_note = put_create.json()["note"]
+    assert created_note["item_id"] == target["id"]
+    assert created_note["concept_id"] == "ebitda_adjusted"
+    assert created_note["concept_maturity"] == "review"
+    assert created_note["case_mode"] == target["case_mode"]
+    assert created_note["subject"] == "EBITDA extraction review"
+    assert created_note["memo_ready"] is True
+    assert created_note["export_ready"] is False
+    assert created_note["author"] == "operator_ui"
+
+    get_note = client.get(
+        f"/internal/v1/deals/{deal_id}/periods/{current_pkg}/review_queue/items/{target['id']}/analyst_note"
+    )
+    assert get_note.status_code == 200
+    fetched = get_note.json()["note"]
+    assert fetched is not None
+    assert fetched["note_id"] == created_note["note_id"]
+    assert fetched["note_text"] == "Needs confirmation against signed borrower package table."
+    assert fetched["memo_ready"] is True
+    assert fetched["export_ready"] is False
+
+    put_update = client.put(
+        f"/internal/v1/deals/{deal_id}/periods/{current_pkg}/review_queue/items/{target['id']}/analyst_note",
+        json={
+            "actor": "operator_ui",
+            "subject": "EBITDA extraction review",
+            "note_text": "Confirmed source mismatch; escalate only if borrower cannot provide exact row support.",
+            "memo_ready": True,
+            "export_ready": True,
+            "metadata": {"source_action": "save_analyst_note"},
+        },
+    )
+    assert put_update.status_code == 200
+    updated = put_update.json()["note"]
+    assert updated["note_id"] == created_note["note_id"]
+    assert updated["note_text"].startswith("Confirmed source mismatch")
+    assert updated["memo_ready"] is True
+    assert updated["export_ready"] is True
+    assert updated["updated_at"] >= updated["created_at"]
+
+    # When a real authenticated session exists, note author should use session identity.
+    store = InternalStore(db_path)
+    session_token = "session_token_analyst_note_test"
+    store.create_session(
+        email="analyst@patricius.test",
+        token_hash=hash_token(session_token),
+        expires_at=(datetime.now(timezone.utc) + timedelta(hours=4)).isoformat(),
+    )
+    put_with_auth = client.put(
+        f"/internal/v1/deals/{deal_id}/periods/{current_pkg}/review_queue/items/{target['id']}/analyst_note",
+        json={
+            "actor": "operator_ui",
+            "subject": "EBITDA extraction review",
+            "note_text": "Session-attributed analyst note update.",
+            "memo_ready": True,
+            "export_ready": True,
+            "metadata": {"source_action": "save_analyst_note"},
+        },
+        headers={"Authorization": f"Bearer {session_token}"},
+    )
+    assert put_with_auth.status_code == 200
+    attributed = put_with_auth.json()["note"]
+    assert attributed["author"] == "analyst@patricius.test"
+    assert attributed["note_text"] == "Session-attributed analyst note update."

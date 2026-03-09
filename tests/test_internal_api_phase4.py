@@ -216,11 +216,19 @@ def test_phase4_deals_events_and_resolution(tmp_path: Path) -> None:
     assert resolve_resp.status_code == 200
     assert resolve_resp.json()["status"] == "verified"
     assert resolve_resp.json()["package_status"] == "completed"
+    assert isinstance(resolve_resp.json().get("resolution_id"), int)
 
     trace_resp = client.get(f"/internal/v1/traces/{trace_id}")
     assert trace_resp.status_code == 200
     assert trace_resp.json()["row"]["status"] == "verified"
+    assert trace_resp.json()["base_row"]["status"] == "candidate_flagged"
     assert trace_resp.json()["row"]["resolved_by_user"] is True
+
+    history_resp = client.get(f"/internal/v1/traces/{trace_id}/history")
+    assert history_resp.status_code == 200
+    assert history_resp.json()["count"] == 1
+    assert history_resp.json()["history"][0]["status_before"] == "candidate_flagged"
+    assert history_resp.json()["history"][0]["status_after"] == "verified"
 
     delta_after = client.get(f"/internal/v1/deals/deal_phase4/periods/{followup_pkg}/delta")
     resolved_row = next(row for row in delta_after.json()["rows"] if row["trace_id"] == trace_id)
@@ -230,6 +238,50 @@ def test_phase4_deals_events_and_resolution(tmp_path: Path) -> None:
     assert trace_events_after.status_code == 200
     assert trace_events_after.json()["count"] > before_count
     assert any(event["event_type"] == "user_resolved" for event in trace_events_after.json()["events"])
+
+
+def test_period_takeaways_endpoint_requires_working_ai_runtime(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+
+    labels_dir = tmp_path / "labels"
+    labels_dir.mkdir(parents=True, exist_ok=True)
+
+    app = create_app(
+        db_path=tmp_path / "runtime" / "api.sqlite3",
+        labels_dir=labels_dir,
+        events_log_path=tmp_path / "runtime" / "events.jsonl",
+        ui_dir=_make_ui_dir(tmp_path),
+    )
+    client = TestClient(app)
+
+    ingest = client.post(
+        "/internal/v1/packages:ingest",
+        json=_sample_ingest_payload(
+            source_email_id="email_takeaways_001",
+            period_end_date="2026-02-28",
+            received_at="2026-03-06T13:00:00+00:00",
+        ),
+    )
+    assert ingest.status_code == 200
+    package_id = ingest.json()["package_id"]
+    _write_label(
+        labels_dir,
+        package_id,
+        "deal_phase4",
+        "2026-02-28",
+        flagged_concept_id="net_income",
+    )
+
+    process = client.post(
+        f"/internal/v1/packages/{package_id}:process",
+        json={"async_mode": False, "max_retries": 0, "extraction_mode": "eval"},
+    )
+    assert process.status_code == 200
+
+    response = client.get(f"/internal/v1/deals/deal_phase4/periods/{package_id}/takeaways")
+    assert response.status_code == 503
+    detail = response.json()["detail"]
+    assert detail.startswith("takeaways_ai_failed:missing_openai_api_key")
 
 
 def test_app_mount_redirects_to_ui(tmp_path: Path) -> None:

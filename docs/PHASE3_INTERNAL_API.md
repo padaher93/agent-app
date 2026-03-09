@@ -30,23 +30,26 @@ Expose internal processing interfaces for package ingest, async processing, delt
 6. `GET /internal/v1/traces/{trace_id}/events`
 - Returns append-only events filtered by `trace_id`.
 
-7. `GET /internal/v1/traces/{trace_id}/evidence`
-- Returns evidence preview payload for document viewer (`xlsx_grid` or `pdf_text` when available).
+7. `GET /internal/v1/traces/{trace_id}/history`
+- Returns append-only user resolution history for immutable correction lineage.
 
-8. `POST /internal/v1/traces/{trace_id}:resolve`
-- Resolves row to `verified`.
+8. `GET /internal/v1/traces/{trace_id}/evidence`
+- Returns evidence preview payload for document viewer (`xlsx_sheet` or `pdf_text` when available).
+
+9. `POST /internal/v1/traces/{trace_id}:resolve`
+- Resolves row to `verified` via append-only trace resolution record (non-destructive correction).
 - Requires `X-Role: Owner|Operator` (Viewer is forbidden).
 
-9. `GET /internal/v1/packages/{package_id}/events`
+10. `GET /internal/v1/packages/{package_id}/events`
 - Returns append-only events filtered by package.
 
-10. `GET /internal/v1/deals`
+11. `GET /internal/v1/deals`
 - Returns deal list with periods.
 
-11. `GET /internal/v1/deals/{deal_id}/periods`
+12. `GET /internal/v1/deals/{deal_id}/periods`
 - Returns periods for selected deal.
 
-12. `GET /internal/v1/health`
+13. `GET /internal/v1/health`
 - Internal health signal for runtime wiring.
 
 ## Lifecycle statuses
@@ -67,6 +70,17 @@ SQLite runtime store (`runtime/internal_api.sqlite3` by default):
 1. `packages` table for ingest/process metadata
 2. `traces` table for row-level trace lookup
 3. `period_revision` tracked per `(deal_id, period_end_date)` for same-period restatements.
+4. `trace_resolutions` table for append-only user correction history.
+
+## Workspace and Access Scope
+1. Packages are tagged with `workspace_id` (default `ws_default`).
+2. Read/write endpoints are scoped by `X-Workspace-Id`; cross-workspace access returns not-found.
+3. Row resolution still requires `X-Role: Owner|Operator`.
+
+## Security Controls
+1. Optional shared-token auth for all endpoints: `X-Internal-Token`.
+2. Optional HTTPS enforcement for proxied traffic: `X-Forwarded-Proto=https`.
+3. Optional at-rest payload encryption mode via Fernet key at API startup.
 
 ## Email adapter
 Use `tools/email_adapter_ingest.py` to convert normalized email payloads into ingest calls.

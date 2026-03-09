@@ -10,6 +10,29 @@ _SCALE_MAP = {
     "B": 1_000_000_000,
 }
 
+_KNOWN_CURRENCY_CODES = {
+    "USD",
+    "EUR",
+    "GBP",
+    "CAD",
+    "AUD",
+    "JPY",
+    "CHF",
+    "SEK",
+    "NOK",
+    "DKK",
+    "NZD",
+    "HKD",
+    "SGD",
+    "CNY",
+    "RMB",
+    "MXN",
+    "BRL",
+    "INR",
+    "ZAR",
+    "AED",
+}
+
 
 @dataclass(frozen=True)
 class NormalizationResult:
@@ -21,9 +44,16 @@ class NormalizationResult:
 
 def _extract_currency(raw_value_text: str, source_snippet: str, fallback_currency: str) -> str:
     combined = f"{raw_value_text} {source_snippet}".upper()
-    m = re.search(r"\b([A-Z]{3})\b", combined)
+    code_pattern = r"\b(" + "|".join(sorted(_KNOWN_CURRENCY_CODES)) + r")\b"
+    m = re.search(code_pattern, combined)
     if m:
         return m.group(1)
+    if "€" in combined:
+        return "EUR"
+    if "£" in combined:
+        return "GBP"
+    if "¥" in combined:
+        return "JPY"
     if "$" in combined:
         return "USD"
     return fallback_currency

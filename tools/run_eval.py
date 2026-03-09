@@ -5,6 +5,7 @@ import argparse
 from datetime import datetime, timezone
 from pathlib import Path
 import sys
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT / "src") not in sys.path:
@@ -24,6 +25,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--dataset-version", default="dataset_pilot_v0.1")
     parser.add_argument("--pipeline-version", default="local")
     parser.add_argument("--failure-taxonomy-file")
+    parser.add_argument("--incident-file")
     parser.add_argument("--required-streak", type=int, default=3)
     return parser.parse_args()
 
@@ -39,6 +41,41 @@ def _load_failure_taxonomy(path: str | None) -> list[dict]:
     raise ValueError("Failure taxonomy payload must be a list or include 'failure_taxonomy'")
 
 
+def _load_incident_status(path: str | None) -> dict[str, Any]:
+    if not path:
+        return {"blocking": False, "summary": "No incident file provided"}
+
+    payload = read_json(Path(path))
+    if isinstance(payload, dict):
+        if "blocking" in payload:
+            return {
+                "blocking": bool(payload.get("blocking")),
+                "summary": str(payload.get("summary", "Explicit incident blocking flag")),
+            }
+
+        incidents = payload.get("incidents")
+        if isinstance(incidents, list):
+            blocking_count = 0
+            for incident in incidents:
+                if not isinstance(incident, dict):
+                    continue
+                status = str(incident.get("status", "")).strip().lower()
+                severity = str(incident.get("severity", "")).strip().lower()
+                category = str(incident.get("category", "")).strip().lower()
+                is_open = status in {"open", "active", "unresolved"}
+                is_blocking_severity = severity in {"critical", "high"}
+                is_blocking_category = category in {"security", "data_integrity", "integrity"}
+                if is_open and is_blocking_severity and is_blocking_category:
+                    blocking_count += 1
+
+            return {
+                "blocking": blocking_count > 0,
+                "summary": f"Blocking incidents: {blocking_count}",
+            }
+
+    return {"blocking": False, "summary": "Incident file parsed; no blocking incidents detected"}
+
+
 def main() -> int:
     args = parse_args()
     history_dir = Path(args.history_dir)
@@ -49,10 +86,12 @@ def main() -> int:
     if history_reports:
         previous_report = read_json(history_reports[-1])
 
+    incident_status = _load_incident_status(args.incident_file)
     result = evaluate(
         ground_truth_dir=Path(args.ground_truth_dir),
         predictions_file=Path(args.predictions_file),
         previous_report=previous_report,
+        blocking_incident=bool(incident_status.get("blocking", False)),
     )
 
     report = write_eval_report(
@@ -62,6 +101,8 @@ def main() -> int:
         result=result,
         failure_taxonomy=_load_failure_taxonomy(args.failure_taxonomy_file),
     )
+    report["incident_status"] = incident_status
+    write_json(Path(args.output_report), report)
 
     schema_errors = validate_with_schema("eval_report", report)
     if schema_errors:

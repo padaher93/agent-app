@@ -16,6 +16,16 @@ Standardize the trust artifact package used in design-partner conversations and 
    - `readiness_summary.json`
    - `trust_artifact.md`
 3. Streak-aware release readiness computation using frozen-history pass streak.
+4. Shadow-mode eval runner for real/redacted data:
+   - `tools/run_real_shadow_eval.py`
+   - enforces minimum package count and streak-based gating.
+5. Release-candidate gate orchestration:
+   - `tools/validate_shadow_partition.py`
+   - `tools/run_strict_llm_smoke.py`
+   - `tools/run_release_candidate_gate.py`
+6. Pre-partner readiness gate orchestration on proxy data:
+   - `tools/run_pre_partner_readiness.py`
+   - hard-blocks production launch with `real_shadow_partner_gate_pending` until design-partner shadow data exists.
 
 ## Inputs
 1. Eval report (`eval_report` contract).

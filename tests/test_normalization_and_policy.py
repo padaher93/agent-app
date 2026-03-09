@@ -17,6 +17,28 @@ def test_normalize_value_handles_missing_numeric() -> None:
     assert result.unresolved_reason == "missing_numeric_value"
 
 
+def test_normalize_value_ignores_non_currency_three_letter_words() -> None:
+    result = normalize_value(
+        raw_value_text="$1,210,000.00",
+        source_snippet="Net Income: 1,210,000.00",
+        deal_currency="USD",
+    )
+    assert result.normalized_value == 1_210_000.0
+    assert result.unit_currency == "USD"
+    assert result.unresolved_reason is None
+
+
+def test_normalize_value_detects_explicit_currency_mismatch() -> None:
+    result = normalize_value(
+        raw_value_text="EUR 2.5 M",
+        source_snippet="Cash and equivalents",
+        deal_currency="USD",
+    )
+    assert result.normalized_value is None
+    assert result.unit_currency == "EUR"
+    assert result.unresolved_reason == "currency_mismatch:EUR_vs_USD"
+
+
 def test_status_policy_thresholds_and_blockers() -> None:
     assert classify_status(0.95, []) == "verified"
     assert classify_status(0.85, []) == "candidate_flagged"

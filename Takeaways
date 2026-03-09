@@ -1,0 +1,20 @@
+src/agent_app_dataset/ui/index.html:44:                <p class="paneName">Takeaways</p>
+src/agent_app_dataset/ui/index.html:51:                <p class="paneName">What's Next</p>
+src/agent_app_dataset/ui/index.html:58:                <p class="paneName">Data</p>
+src/agent_app_dataset/ui/index.html:65:                <p class="paneName">Proof</p>
+src/agent_app_dataset/ui/app.js:16:  takeawaysByPeriod: new Map(),
+src/agent_app_dataset/ui/app.js:866:      `/internal/v1/deals/${encodeURIComponent(state.selectedDealId)}/periods/${encodeURIComponent(periodId)}/takeaways`
+src/agent_app_dataset/ui/app.js:873:    state.takeawaysByPeriod.set(periodId, takeawaysData);
+src/agent_app_dataset/ui/app.js:875:    state.takeawaysByPeriod.delete(periodId);
+src/agent_app_dataset/ui/app.js:1061:  const summaryPayload = state.takeawaysByPeriod.get(state.activePeriodId);
+src/agent_app_dataset/ui/app.js:1081:      <div class="takeawaysCard">
+src/agent_app_dataset/ui/app.js:1083:          <p class="takeawaysTitle">AI period summary</p>
+src/agent_app_dataset/ui/app.js:1883:    `/internal/v1/deals/${encodeURIComponent(state.selectedDealId)}/periods/${encodeURIComponent(state.activePeriodId)}/takeaways`
+src/agent_app_dataset/ui/app.js:1886:    state.takeawaysByPeriod.set(state.activePeriodId, refreshedTakeaways);
+src/agent_app_dataset/ui/app.js:1888:    state.takeawaysByPeriod.delete(state.activePeriodId);
+tests/test_internal_api_phase4.py:281:    response = client.get(f"/internal/v1/deals/deal_phase4/periods/{package_id}/takeaways")
+src/agent_app_dataset/ui/app.css:630:.paneName {
+src/agent_app_dataset/ui/app.css:645:.takeawaysCard {
+src/agent_app_dataset/internal_api.py:20:from .ai_takeaways import build_period_takeaways
+src/agent_app_dataset/internal_api.py:1006:    @app.get("/internal/v1/deals/{deal_id}/periods/{period_id}/takeaways")
+src/agent_app_dataset/internal_api.py:1023:        summary = build_period_takeaways(

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patricius Delta Review</title>
+    <link rel="stylesheet" href="/app/delta-review.css" />
+  </head>
+  <body>
+    <div class="dr-root">
+      <header class="dr-top" aria-label="Delta review header">
+        <div class="dr-top-row dr-top-row-main">
+          <div class="dr-title-wrap">
+            <span class="dr-brand">PATRICIUS</span>
+            <span class="dr-slash">/</span>
+            <h1 id="deal-title" class="dr-deal-title">Loading deal...</h1>
+          </div>
+          <div class="dr-top-right">
+            <label class="dr-visually-hidden" for="deal-switcher">Deal</label>
+            <select id="deal-switcher" class="dr-switcher dr-switcher-deal" aria-label="Deal switcher"></select>
+          </div>
+        </div>
+
+        <div class="dr-top-row dr-top-row-comparison">
+          <div class="dr-comparison-wrap">
+            <p id="comparison-pair" class="dr-comparison-pair">Comparison pending</p>
+            <p id="comparison-note" class="dr-comparison-note"></p>
+          </div>
+        </div>
+
+        <div class="dr-top-row dr-top-row-counts">
+          <div id="summary-counts" class="dr-counts" aria-label="Summary counts"></div>
+        </div>
+
+        <div class="dr-top-row dr-top-row-rail">
+          <div id="period-rail" class="dr-period-rail" aria-label="Current period rail"></div>
+          <div class="dr-baseline-wrap">
+            <div id="baseline-control" class="dr-baseline-control">
+              <label class="dr-switcher-label" for="baseline-switcher">Baseline</label>
+              <select id="baseline-switcher" class="dr-switcher dr-switcher-baseline" aria-label="Baseline period"></select>
+            </div>
+            <label class="dr-resolved-toggle">
+              <input id="include-resolved" type="checkbox" />
+              Include resolved
+            </label>
+          </div>
+        </div>
+      </header>
+
+      <main class="dr-main" aria-label="Delta review workspace">
+        <section class="dr-queue-pane" aria-label="Exception queue">
+          <div id="queue-content" class="dr-queue-content"></div>
+        </section>
+        <section class="dr-detail-pane" aria-label="Decision detail">
+          <div id="detail-content" class="dr-detail-content"></div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/app/delta-review.js"></script>
+  </body>
+</html>

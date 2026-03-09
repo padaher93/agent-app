@@ -115,6 +115,15 @@ class DraftWorkflowEventRequest(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
+class AnalystNoteUpsertRequest(BaseModel):
+    actor: str = Field(default="operator_ui", min_length=1, max_length=120)
+    subject: str = Field(default="", max_length=500)
+    note_text: str = Field(min_length=1, max_length=20000)
+    memo_ready: bool = False
+    export_ready: bool = False
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
 class UpdateDealRequest(BaseModel):
     display_name: str = Field(min_length=1, max_length=120)
 
@@ -269,6 +278,26 @@ def _bearer_token(authorization: str | None) -> str:
     if not token:
         raise HTTPException(status_code=401, detail="missing_bearer_token")
     return token
+
+
+def _resolve_actor_identity(
+    *,
+    store: InternalStore,
+    authorization: str | None,
+    requested_actor: str,
+) -> str:
+    fallback = str(requested_actor).strip() or "operator_ui"
+    if not authorization:
+        return fallback
+    try:
+        token = _bearer_token(authorization)
+    except HTTPException:
+        return fallback
+    session = store.get_session(hash_token(token), now_iso=utc_iso_now())
+    if session is None:
+        return fallback
+    email = str(session.get("email", "")).strip()
+    return email or fallback
 
 
 def create_app(
@@ -1742,6 +1771,124 @@ def create_app(
             "item_id": item_id or "",
             "count": len(events),
             "events": events,
+        }
+
+    @app.get("/internal/v1/deals/{deal_id}/periods/{period_id}/review_queue/items/{item_id}/analyst_note")
+    def get_review_queue_analyst_note(
+        deal_id: str,
+        period_id: str,
+        item_id: str,
+        x_workspace_id: str = Header(default="ws_default", alias="X-Workspace-Id"),
+    ) -> dict[str, Any]:
+        if store.is_deal_archived(deal_id):
+            raise HTTPException(status_code=404, detail="period_not_found")
+        period_package = store.get_package(period_id)
+        if period_package is None:
+            raise HTTPException(status_code=404, detail="period_not_found")
+        _assert_workspace_access(period_package, x_workspace_id)
+        if period_package.deal_id != deal_id:
+            raise HTTPException(status_code=404, detail="period_not_found")
+
+        note = store.get_analyst_note(
+            deal_id=deal_id,
+            period_id=period_id,
+            item_id=item_id,
+        )
+        return {
+            "deal_id": deal_id,
+            "period_id": period_id,
+            "item_id": item_id,
+            "note": note,
+        }
+
+    @app.put("/internal/v1/deals/{deal_id}/periods/{period_id}/review_queue/items/{item_id}/analyst_note")
+    def upsert_review_queue_analyst_note(
+        deal_id: str,
+        period_id: str,
+        item_id: str,
+        request: AnalystNoteUpsertRequest,
+        x_workspace_id: str = Header(default="ws_default", alias="X-Workspace-Id"),
+        authorization: str | None = Header(default=None, alias="Authorization"),
+    ) -> dict[str, Any]:
+        if store.is_deal_archived(deal_id):
+            raise HTTPException(status_code=404, detail="period_not_found")
+        period_package = store.get_package(period_id)
+        if period_package is None:
+            raise HTTPException(status_code=404, detail="period_not_found")
+        _assert_workspace_access(period_package, x_workspace_id)
+        if period_package.deal_id != deal_id:
+            raise HTTPException(status_code=404, detail="period_not_found")
+
+        deal_packages = _packages_for_deal_workspace(store, deal_id, x_workspace_id)
+        if not deal_packages:
+            raise HTTPException(status_code=404, detail="period_not_found")
+
+        payload = build_review_queue_payload(
+            store=store,
+            deal_id=deal_id,
+            period_id=period_id,
+            deal_packages=deal_packages,
+            include_resolved=True,
+        )
+        target_item = next(
+            (item for item in payload.get("items", []) if str(item.get("id", "")).strip() == str(item_id).strip()),
+            None,
+        )
+        if target_item is None:
+            raise HTTPException(status_code=404, detail="review_item_not_found")
+
+        actor = _resolve_actor_identity(
+            store=store,
+            authorization=authorization,
+            requested_actor=request.actor,
+        )
+        try:
+            note = store.upsert_analyst_note(
+                deal_id=deal_id,
+                period_id=period_id,
+                item_id=str(target_item.get("id", item_id)).strip(),
+                concept_id=str(target_item.get("metric_key", "")).strip(),
+                concept_maturity=str(target_item.get("concept_maturity", "")).strip(),
+                trust_tier=str(target_item.get("trust_tier", "")).strip(),
+                case_mode=str(target_item.get("case_mode", "")).strip(),
+                author=actor,
+                subject=request.subject,
+                note_text=request.note_text,
+                memo_ready=bool(request.memo_ready),
+                export_ready=bool(request.export_ready),
+                metadata=request.metadata,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc))
+
+        append_events(
+            events_log_path,
+            [
+                {
+                    "timestamp": _utc_now(),
+                    "event_type": "analyst_note_upserted",
+                    "phase": "publish",
+                    "package_id": period_id,
+                    "trace_id": str((target_item.get("trace_ids") or [""])[0] if isinstance(target_item.get("trace_ids"), list) else ""),
+                    "payload": {
+                        "deal_id": deal_id,
+                        "period_id": period_id,
+                        "item_id": item_id,
+                        "concept_id": str(target_item.get("metric_key", "")),
+                        "case_mode": str(target_item.get("case_mode", "")),
+                        "actor": actor,
+                        "memo_ready": bool(request.memo_ready),
+                        "export_ready": bool(request.export_ready),
+                    },
+                }
+            ],
+        )
+
+        return {
+            "deal_id": deal_id,
+            "period_id": period_id,
+            "item_id": item_id,
+            "note": note,
         }
 
     @app.get("/internal/v1/deals/{deal_id}/periods/{period_id}/takeaways")

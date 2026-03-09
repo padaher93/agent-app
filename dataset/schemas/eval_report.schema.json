@@ -140,6 +140,19 @@
         },
         "additionalProperties": true
       }
+    },
+    "incident_status": {
+      "type": "object",
+      "required": ["blocking"],
+      "properties": {
+        "blocking": {
+          "type": "boolean"
+        },
+        "summary": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
     }
   },
   "additionalProperties": false

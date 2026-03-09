@@ -17,6 +17,7 @@ class EvalResult:
     row_counts: dict[str, int]
     per_concept_verified_precision: dict[str, float]
     regressions: dict[str, float | bool]
+    incident_blocking: bool
 
 
 def _index_ground_truth(ground_truth_dir: Path) -> dict[tuple[str, str], dict[str, Any]]:
@@ -50,6 +51,7 @@ def evaluate(
     predictions_file: Path,
     thresholds: dict[str, float] | None = None,
     previous_report: dict[str, Any] | None = None,
+    blocking_incident: bool = False,
 ) -> EvalResult:
     limits = thresholds or QUALITY_THRESHOLDS
 
@@ -161,6 +163,9 @@ def evaluate(
             failures.append("evidence_link_accuracy_regression")
             regressions["blocked"] = True
 
+    if blocking_incident:
+        failures.append("security_data_integrity_incident")
+
     return EvalResult(
         metrics=metrics,
         gate_pass=(len(failures) == 0),
@@ -173,6 +178,7 @@ def evaluate(
         },
         per_concept_verified_precision=per_concept_verified_precision,
         regressions=regressions,
+        incident_blocking=blocking_incident,
     )
 
 
@@ -194,6 +200,9 @@ def write_eval_report(
         "failure_taxonomy": failure_taxonomy or [],
         "per_concept_verified_precision": result.per_concept_verified_precision,
         "regressions": result.regressions,
+        "incident_status": {
+            "blocking": result.incident_blocking,
+        },
     }
     write_json(output_report, report)
     return report

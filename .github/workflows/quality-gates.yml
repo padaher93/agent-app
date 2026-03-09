@@ -64,6 +64,38 @@ jobs:
         run: |
           python tools/check_event_log_integrity.py --events-log dataset/eval/ci_agent_events.jsonl
 
+      - name: Validate shadow partition readiness (preflight)
+        run: |
+          python tools/validate_shadow_partition.py \
+            --packages-dir dataset/examples/ci_shadow_gate/packages \
+            --labels-dir dataset/examples/ci_shadow_gate/labels \
+            --min-packages 1 \
+            --min-deals 1 \
+            --min-periods-per-deal 1 \
+            --skip-storage-check
+
+      - name: Run release-candidate gate preflight
+        run: |
+          mkdir -p runtime
+          python tools/run_release_candidate_gate.py \
+            --runtime-profile dev \
+            --skip-strict-config \
+            --smoke-packages-dir dataset/examples/ci_shadow_gate/packages \
+            --smoke-labels-dir dataset/examples/ci_shadow_gate/labels \
+            --smoke-max-packages 1 \
+            --smoke-extraction-mode eval \
+            --shadow-packages-dir dataset/examples/ci_shadow_gate/packages \
+            --shadow-labels-dir dataset/examples/ci_shadow_gate/labels \
+            --shadow-min-packages 1 \
+            --shadow-min-deals 1 \
+            --shadow-min-periods-per-deal 1 \
+            --shadow-skip-storage-check \
+            --shadow-required-streak 1 \
+            --shadow-min-eval-packages 1 \
+            --shadow-history-dir dataset/eval/history/ci_shadow \
+            --shadow-pipeline-version ci_rc_preflight \
+            --output-summary runtime/ci_release_candidate_summary.json
+
       - name: Run tests
         run: |
           pytest -q

@@ -40,6 +40,8 @@ Hard blockers:
 2. No single critical concept may have verified precision below `95.0%`.
 3. Any regression > `1.0` percentage point on Verified Row Precision or Evidence-Link Accuracy blocks release.
 4. Any security/data-integrity incident blocks release until closed.
+5. Shadow-mode (`real_shadow_test`) must meet the same gate thresholds with minimum sample size `>= 20` packages before production launch.
+6. Before design-partner data is available, pre-partner readiness may run on proxy data to validate all non-partner work, but cannot mark production launch as ready.
 
 ## Evaluation Cadence
 1. Run full regression on every workflow/model/prompt change.

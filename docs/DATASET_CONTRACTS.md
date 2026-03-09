@@ -57,6 +57,9 @@ Required fields:
 - `failure_taxonomy`
 - `gate_pass`
 
+Optional security gating field:
+- `incident_status` (for explicit security/data-integrity release blocks)
+
 ## Storage policy
 
 Raw public documents are not stored in git. The repo stores metadata + checksums + `storage_uri` only.

@@ -1,0 +1,223 @@
+[
+  {
+    "example_id": "pos_net_income_shall_quarterly",
+    "expectation_bucket": "explicit_positive",
+    "text": "Borrower shall provide Net Income with each quarterly reporting package.",
+    "expected_concept_candidates": ["net_income"],
+    "expected_grounded_concepts": ["net_income"],
+    "notes": "Canonical explicit obligation phrasing."
+  },
+  {
+    "example_id": "pos_net_income_must_monthly",
+    "expectation_bucket": "explicit_positive",
+    "text": "Borrower must include Net Income in each monthly reporting package.",
+    "expected_concept_candidates": ["net_income"],
+    "expected_grounded_concepts": ["net_income"],
+    "notes": "Explicit with monthly cadence."
+  },
+  {
+    "example_id": "pos_net_income_required_certificate",
+    "expectation_bucket": "explicit_positive",
+    "text": "Borrower is required to submit Net Income in each compliance certificate.",
+    "expected_concept_candidates": ["net_income"],
+    "expected_grounded_concepts": ["net_income"],
+    "notes": "Explicit requirement anchored to compliance certificate context."
+  },
+  {
+    "example_id": "pos_net_earnings_alias",
+    "expectation_bucket": "explicit_positive",
+    "text": "Borrower shall furnish net earnings with the quarterly reporting package.",
+    "expected_concept_candidates": ["net_income"],
+    "expected_grounded_concepts": ["net_income"],
+    "notes": "Alias term should map to net_income."
+  },
+  {
+    "example_id": "pos_required_reporting_deliverable",
+    "expectation_bucket": "explicit_positive",
+    "text": "Required reporting deliverable: Net Income to be furnished quarterly in the reporting package.",
+    "expected_concept_candidates": ["net_income"],
+    "expected_grounded_concepts": ["net_income"],
+    "notes": "Explicit required reporting deliverable language."
+  },
+  {
+    "example_id": "pos_reporting_schedule_net_income",
+    "expectation_bucket": "schedule",
+    "text": "Reporting schedule: Borrower must provide Net Income line item each quarter.",
+    "expected_concept_candidates": ["net_income"],
+    "expected_grounded_concepts": ["net_income"],
+    "notes": "Schedule style wording with explicit requirement verb."
+  },
+  {
+    "example_id": "vague_overview",
+    "expectation_bucket": "vague_negative",
+    "text": "Quarterly reporting package overview.",
+    "expected_concept_candidates": [],
+    "expected_grounded_concepts": [],
+    "llm_probe_concepts": ["net_income"],
+    "notes": "Vague context without requirement should never ground."
+  },
+  {
+    "example_id": "vague_deliverables_list",
+    "expectation_bucket": "vague_negative",
+    "text": "Reporting deliverables are listed below for reference.",
+    "expected_concept_candidates": [],
+    "expected_grounded_concepts": [],
+    "llm_probe_concepts": ["net_income"],
+    "notes": "Generic deliverables mention only."
+  },
+  {
+    "example_id": "vague_financial_info_discussed",
+    "expectation_bucket": "vague_negative",
+    "text": "Financial information should be discussed with lender each quarter.",
+    "expected_concept_candidates": [],
+    "expected_grounded_concepts": [],
+    "llm_probe_concepts": ["net_income"],
+    "notes": "No explicit obligation verb-object pair for concept."
+  },
+  {
+    "example_id": "vague_periodic_reporting_info",
+    "expectation_bucket": "vague_negative",
+    "text": "Borrower provides periodic reporting information.",
+    "expected_concept_candidates": [],
+    "expected_grounded_concepts": [],
+    "llm_probe_concepts": ["net_income"],
+    "notes": "Narrative language without explicit requirement."
+  },
+  {
+    "example_id": "desc_net_income_positive",
+    "expectation_bucket": "descriptive_negative",
+    "text": "Net Income was positive for the quarter.",
+    "expected_concept_candidates": ["net_income"],
+    "expected_grounded_concepts": [],
+    "notes": "Descriptive result is not a reporting obligation."
+  },
+  {
+    "example_id": "desc_metrics_list",
+    "expectation_bucket": "descriptive_negative",
+    "text": "The package includes metrics such as revenue and net income.",
+    "expected_concept_candidates": ["net_income"],
+    "expected_grounded_concepts": [],
+    "notes": "Mentions concept but no requirement language."
+  },
+  {
+    "example_id": "desc_commentary_attachment",
+    "expectation_bucket": "descriptive_negative",
+    "text": "Management commentary on net income trends is attached.",
+    "expected_concept_candidates": ["net_income"],
+    "expected_grounded_concepts": [],
+    "notes": "Commentary should not ground requirement."
+  },
+  {
+    "example_id": "desc_board_summary",
+    "expectation_bucket": "descriptive_negative",
+    "text": "Net earnings summary prepared for board discussion.",
+    "expected_concept_candidates": ["net_income"],
+    "expected_grounded_concepts": [],
+    "notes": "Summary language only."
+  },
+  {
+    "example_id": "adv_financial_statements_no_concept",
+    "expectation_bucket": "adversarial_negative",
+    "text": "Borrower shall deliver quarterly financial statements to lender.",
+    "expected_concept_candidates": [],
+    "expected_grounded_concepts": [],
+    "llm_probe_concepts": ["net_income"],
+    "notes": "Model may infer net income but snippet is not explicit."
+  },
+  {
+    "example_id": "adv_commentary_required",
+    "expectation_bucket": "adversarial_negative",
+    "text": "Borrower must include net income commentary in quarterly reporting package.",
+    "expected_concept_candidates": ["net_income"],
+    "expected_grounded_concepts": [],
+    "notes": "Requirement verb + context but only commentary, should be blocked."
+  },
+  {
+    "example_id": "adv_index_reference",
+    "expectation_bucket": "adversarial_negative",
+    "text": "Borrower shall provide reporting package index of net income references.",
+    "expected_concept_candidates": ["net_income"],
+    "expected_grounded_concepts": [],
+    "notes": "Index/reference language should remain non-grounded."
+  },
+  {
+    "example_id": "adv_overview_phrase",
+    "expectation_bucket": "adversarial_negative",
+    "text": "Borrower shall report net income in quarterly reporting package overview.",
+    "expected_concept_candidates": ["net_income"],
+    "expected_grounded_concepts": [],
+    "notes": "Overview qualifier should prevent grounded promotion."
+  },
+  {
+    "example_id": "mixed_net_income_and_ebitda",
+    "expectation_bucket": "mixed",
+    "text": "Borrower shall provide Net Income and EBITDA in each quarterly reporting package.",
+    "expected_concept_candidates": ["net_income", "ebitda_reported"],
+    "expected_grounded_concepts": ["net_income"],
+    "notes": "Only net_income can be grounded-supported today."
+  },
+  {
+    "example_id": "mixed_net_income_and_cash",
+    "expectation_bucket": "mixed",
+    "text": "Borrower shall provide Net Income and Cash and Equivalents with each quarterly reporting package.",
+    "expected_concept_candidates": ["net_income", "cash_and_equivalents"],
+    "expected_grounded_concepts": ["net_income"],
+    "notes": "Cash remains candidate-only concept."
+  },
+  {
+    "example_id": "mixed_ebitda_cash_only",
+    "expectation_bucket": "mixed",
+    "text": "Borrower must include EBITDA and cash balance in each quarterly reporting package.",
+    "expected_concept_candidates": ["ebitda_reported", "cash_and_equivalents"],
+    "expected_grounded_concepts": [],
+    "notes": "No net_income in clause; no grounded promotion expected."
+  },
+  {
+    "example_id": "schedule_table_explicit_net_income",
+    "expectation_bucket": "schedule",
+    "text": "Schedule A required reporting package deliverables: Borrower shall provide Net Income each quarter.",
+    "expected_concept_candidates": ["net_income"],
+    "expected_grounded_concepts": ["net_income"],
+    "notes": "Table/schedule style explicit requirement."
+  },
+  {
+    "example_id": "schedule_index_only",
+    "expectation_bucket": "schedule",
+    "text": "Schedule B financial metrics index: Net Income, EBITDA, Cash and Equivalents.",
+    "expected_concept_candidates": ["net_income", "ebitda_reported", "cash_and_equivalents"],
+    "expected_grounded_concepts": [],
+    "notes": "Index entry only should not ground obligations."
+  },
+  {
+    "example_id": "ebitda_explicit_requirement",
+    "expectation_bucket": "ebitda_eval",
+    "text": "Borrower shall provide EBITDA with each quarterly reporting package.",
+    "expected_concept_candidates": ["ebitda_reported"],
+    "expected_grounded_concepts": [],
+    "notes": "EBITDA candidate discovery expected, but promotion should remain blocked."
+  },
+  {
+    "example_id": "ebitda_descriptive",
+    "expectation_bucket": "ebitda_eval",
+    "text": "EBITDA improved in the quarter according to management discussion.",
+    "expected_concept_candidates": ["ebitda_reported"],
+    "expected_grounded_concepts": [],
+    "notes": "Descriptive EBITDA statement only."
+  },
+  {
+    "example_id": "cash_explicit_requirement",
+    "expectation_bucket": "cash_eval",
+    "text": "Borrower shall provide Cash and Equivalents with each quarterly reporting package.",
+    "expected_concept_candidates": ["cash_and_equivalents"],
+    "expected_grounded_concepts": [],
+    "notes": "Cash concept remains candidate-only."
+  },
+  {
+    "example_id": "cash_commentary",
+    "expectation_bucket": "cash_eval",
+    "text": "Cash and equivalents trend commentary for reporting package discussion.",
+    "expected_concept_candidates": ["cash_and_equivalents"],
+    "expected_grounded_concepts": [],
+    "notes": "Commentary language should not ground."
+  }
+]

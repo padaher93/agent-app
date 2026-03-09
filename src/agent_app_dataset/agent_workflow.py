@@ -46,11 +46,13 @@ def _event(
     phase: str,
     trace_id: str | None = None,
     payload: dict[str, Any] | None = None,
+    agent_id: str = "agent_1",
 ) -> dict[str, Any]:
     return {
         "timestamp": _utc_now(),
         "event_type": event_type,
         "phase": phase,
+        "agent_id": agent_id,
         "package_id": package_id,
         "trace_id": trace_id,
         "payload": payload or {},
@@ -148,16 +150,32 @@ def append_events(log_path: Path, events: list[dict[str, Any]]) -> None:
     _append_events(log_path, events)
 
 
-def _verifier_objections(row: dict[str, Any]) -> list[str]:
+def _build_verifier_packet(row: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "trace_id": row.get("trace_id"),
+        "concept_id": row.get("concept_id"),
+        "candidate": {
+            "status": row.get("status"),
+            "confidence": row.get("confidence"),
+            "normalized_value": row.get("normalized_value"),
+        },
+        "evidence": row.get("evidence", {}),
+        "hard_blockers": list(row.get("hard_blockers", [])),
+    }
+
+
+def _verifier_objections(packet: dict[str, Any]) -> list[str]:
     objections: list[str] = []
-    evidence = row.get("evidence", {})
+    evidence = packet.get("evidence", {})
 
     if not evidence.get("doc_id") or not evidence.get("locator_type") or not evidence.get("locator_value"):
         objections.append("missing_evidence_location")
 
-    blockers = set(row.get("hard_blockers", []))
-    if "currency_unit_mismatch" in blockers:
-        objections.append("currency_unit_mismatch")
+    blockers = {str(value) for value in packet.get("hard_blockers", [])}
+    for blocker in blockers:
+        if blocker.startswith("currency_mismatch:") or blocker == "currency_unit_mismatch":
+            objections.append("currency_unit_mismatch")
+            break
 
     return objections
 
@@ -190,9 +208,10 @@ def _review_row(
 
     # Independent verifier loop with capped retries.
     while retries <= max_retries:
+        verifier_packet = _build_verifier_packet(row)
         attempt_status = str(row.get("status"))
         attempt_confidence = row.get("confidence")
-        objections = _verifier_objections(row)
+        objections = _verifier_objections(verifier_packet)
         objection_reasons.extend(objections)
         attempt_record = {
             "attempt": retries,
@@ -212,7 +231,9 @@ def _review_row(
                     "status": row.get("status"),
                     "confidence": row.get("confidence"),
                     "objections": objections,
+                    "verifier_packet": verifier_packet,
                 },
+                agent_id="agent_4",
             )
         )
 
@@ -231,6 +252,7 @@ def _review_row(
                     phase="verify",
                     trace_id=row.get("trace_id"),
                     payload={"reason": objections},
+                    agent_id="agent_4",
                 )
             )
             break
@@ -256,6 +278,7 @@ def _review_row(
                         "updated_confidence": row["confidence"],
                         "updated_status": row["status"],
                     },
+                    agent_id="agent_4",
                 )
             )
             continue
@@ -272,6 +295,7 @@ def _review_row(
                 phase="verify",
                 trace_id=row.get("trace_id"),
                 payload={"status": row.get("status"), "confidence": row.get("confidence")},
+                agent_id="agent_4",
             )
         )
         break
@@ -304,10 +328,18 @@ def run_workflow_for_package(
     package_id = package_prediction["package_id"]
     events: list[dict[str, Any]] = []
 
-    events.append(_event("phase_started", package_id, "classify"))
-    events.append(_event("phase_completed", package_id, "classify", payload={"deal_id": package_prediction.get("deal_id")}))
+    events.append(_event("phase_started", package_id, "classify", agent_id="agent_1"))
+    events.append(
+        _event(
+            "phase_completed",
+            package_id,
+            "classify",
+            payload={"deal_id": package_prediction.get("deal_id")},
+            agent_id="agent_2",
+        )
+    )
 
-    events.append(_event("phase_started", package_id, "extract"))
+    events.append(_event("phase_started", package_id, "extract", agent_id="agent_1"))
     for row in package_prediction["rows"]:
         events.append(
             _event(
@@ -320,11 +352,20 @@ def run_workflow_for_package(
                     "status": row.get("status"),
                     "confidence": row.get("confidence"),
                 },
+                agent_id="agent_3",
             )
         )
-    events.append(_event("phase_completed", package_id, "extract", payload={"row_count": len(package_prediction['rows'])}))
+    events.append(
+        _event(
+            "phase_completed",
+            package_id,
+            "extract",
+            payload={"row_count": len(package_prediction['rows'])},
+            agent_id="agent_3",
+        )
+    )
 
-    events.append(_event("phase_started", package_id, "verify"))
+    events.append(_event("phase_started", package_id, "verify", agent_id="agent_1"))
     retries_total = 0
     verified_rows = []
     for row in package_prediction["rows"]:
@@ -332,16 +373,32 @@ def run_workflow_for_package(
         retries_total += retries
         verified_rows.append(updated_row)
         events.extend(row_events)
-    events.append(_event("phase_completed", package_id, "verify", payload={"retries": retries_total}))
+    events.append(
+        _event(
+            "phase_completed",
+            package_id,
+            "verify",
+            payload={"retries": retries_total},
+            agent_id="agent_4",
+        )
+    )
 
-    events.append(_event("phase_started", package_id, "publish"))
+    events.append(_event("phase_started", package_id, "publish", agent_id="agent_1"))
     final_package = {
         "package_id": package_prediction["package_id"],
         "deal_id": package_prediction.get("deal_id"),
         "period_end_date": package_prediction.get("period_end_date"),
         "rows": verified_rows,
     }
-    events.append(_event("phase_completed", package_id, "publish", payload={"row_count": len(verified_rows)}))
+    events.append(
+        _event(
+            "phase_completed",
+            package_id,
+            "publish",
+            payload={"row_count": len(verified_rows)},
+            agent_id="agent_1",
+        )
+    )
 
     return final_package, events, retries_total
 

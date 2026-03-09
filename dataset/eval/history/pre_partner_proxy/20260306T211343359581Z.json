@@ -1,0 +1,45 @@
+{
+  "dataset_version": "proxy_v1_full",
+  "failure_taxonomy": [],
+  "failures": [],
+  "gate_pass": true,
+  "generated_at": "2026-03-06T21:13:43.358864+00:00",
+  "incident_status": {
+    "blocking": false,
+    "summary": "No incident file provided"
+  },
+  "metrics": {
+    "evidence_link_accuracy": 1.0,
+    "false_verified_rate": 0.0,
+    "package_completion_rate": 1.0,
+    "unresolved_rate": 0.0015384615384615385,
+    "verified_precision": 1.0
+  },
+  "per_concept_verified_precision": {
+    "accounts_payable_total": 1.0,
+    "accounts_receivable_total": 1.0,
+    "cash_and_equivalents": 1.0,
+    "ebitda_adjusted": 1.0,
+    "ebitda_reported": 1.0,
+    "interest_expense": 1.0,
+    "inventory_total": 1.0,
+    "net_income": 1.0,
+    "operating_income_ebit": 1.0,
+    "revenue_total": 1.0,
+    "total_assets": 1.0,
+    "total_debt": 1.0,
+    "total_liabilities": 1.0
+  },
+  "pipeline_version": "pre_partner_gate",
+  "regressions": {
+    "blocked": false,
+    "evidence_link_accuracy_delta": 0.0,
+    "verified_precision_delta": 0.0
+  },
+  "row_counts": {
+    "evidence_rows": 650,
+    "packages": 50,
+    "total_rows": 650,
+    "verified_rows": 628
+  }
+}

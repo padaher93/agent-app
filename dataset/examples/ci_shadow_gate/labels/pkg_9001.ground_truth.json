@@ -1,0 +1,326 @@
+{
+  "schema_version": "1.0",
+  "package_id": "pkg_9001",
+  "deal_id": "deal_ci_gate",
+  "period_end_date": "2026-01-31",
+  "dictionary_version": "v1.0",
+  "labeling": {
+    "primary_labeler": "ci_labeler",
+    "reviewer": "ci_reviewer",
+    "adjudication_required": false
+  },
+  "rows": [
+    {
+      "trace_id": "tr_pkg_9001_revenue_total",
+      "concept_id": "revenue_total",
+      "period_end_date": "2026-01-31",
+      "raw_value_text": "$100.00",
+      "normalized_value": 100.0,
+      "unit_currency": "USD",
+      "expected_status": "verified",
+      "labeler_confidence": 0.99,
+      "flags": [],
+      "normalization": {
+        "raw_scale": "absolute",
+        "normalized_scale": "absolute",
+        "currency_conversion_applied": false
+      },
+      "evidence": {
+        "doc_id": "file_9001_01",
+        "doc_name": "ci_gate_package.pdf",
+        "page_or_sheet": "Page 1",
+        "locator_type": "paragraph",
+        "locator_value": "p1:l1",
+        "source_snippet": "USD 100.00"
+      }
+    },
+    {
+      "trace_id": "tr_pkg_9001_ebitda_reported",
+      "concept_id": "ebitda_reported",
+      "period_end_date": "2026-01-31",
+      "raw_value_text": "$100.00",
+      "normalized_value": 100.0,
+      "unit_currency": "USD",
+      "expected_status": "verified",
+      "labeler_confidence": 0.99,
+      "flags": [],
+      "normalization": {
+        "raw_scale": "absolute",
+        "normalized_scale": "absolute",
+        "currency_conversion_applied": false
+      },
+      "evidence": {
+        "doc_id": "file_9001_01",
+        "doc_name": "ci_gate_package.pdf",
+        "page_or_sheet": "Page 1",
+        "locator_type": "paragraph",
+        "locator_value": "p1:l2",
+        "source_snippet": "USD 100.00"
+      }
+    },
+    {
+      "trace_id": "tr_pkg_9001_ebitda_adjusted",
+      "concept_id": "ebitda_adjusted",
+      "period_end_date": "2026-01-31",
+      "raw_value_text": "$100.00",
+      "normalized_value": 100.0,
+      "unit_currency": "USD",
+      "expected_status": "verified",
+      "labeler_confidence": 0.99,
+      "flags": [],
+      "normalization": {
+        "raw_scale": "absolute",
+        "normalized_scale": "absolute",
+        "currency_conversion_applied": false
+      },
+      "evidence": {
+        "doc_id": "file_9001_01",
+        "doc_name": "ci_gate_package.pdf",
+        "page_or_sheet": "Page 1",
+        "locator_type": "paragraph",
+        "locator_value": "p1:l3",
+        "source_snippet": "USD 100.00"
+      }
+    },
+    {
+      "trace_id": "tr_pkg_9001_operating_income_ebit",
+      "concept_id": "operating_income_ebit",
+      "period_end_date": "2026-01-31",
+      "raw_value_text": "$100.00",
+      "normalized_value": 100.0,
+      "unit_currency": "USD",
+      "expected_status": "verified",
+      "labeler_confidence": 0.99,
+      "flags": [],
+      "normalization": {
+        "raw_scale": "absolute",
+        "normalized_scale": "absolute",
+        "currency_conversion_applied": false
+      },
+      "evidence": {
+        "doc_id": "file_9001_01",
+        "doc_name": "ci_gate_package.pdf",
+        "page_or_sheet": "Page 1",
+        "locator_type": "paragraph",
+        "locator_value": "p1:l4",
+        "source_snippet": "USD 100.00"
+      }
+    },
+    {
+      "trace_id": "tr_pkg_9001_interest_expense",
+      "concept_id": "interest_expense",
+      "period_end_date": "2026-01-31",
+      "raw_value_text": "$100.00",
+      "normalized_value": 100.0,
+      "unit_currency": "USD",
+      "expected_status": "verified",
+      "labeler_confidence": 0.99,
+      "flags": [],
+      "normalization": {
+        "raw_scale": "absolute",
+        "normalized_scale": "absolute",
+        "currency_conversion_applied": false
+      },
+      "evidence": {
+        "doc_id": "file_9001_01",
+        "doc_name": "ci_gate_package.pdf",
+        "page_or_sheet": "Page 1",
+        "locator_type": "paragraph",
+        "locator_value": "p1:l5",
+        "source_snippet": "USD 100.00"
+      }
+    },
+    {
+      "trace_id": "tr_pkg_9001_net_income",
+      "concept_id": "net_income",
+      "period_end_date": "2026-01-31",
+      "raw_value_text": "$100.00",
+      "normalized_value": 100.0,
+      "unit_currency": "USD",
+      "expected_status": "verified",
+      "labeler_confidence": 0.99,
+      "flags": [],
+      "normalization": {
+        "raw_scale": "absolute",
+        "normalized_scale": "absolute",
+        "currency_conversion_applied": false
+      },
+      "evidence": {
+        "doc_id": "file_9001_01",
+        "doc_name": "ci_gate_package.pdf",
+        "page_or_sheet": "Page 1",
+        "locator_type": "paragraph",
+        "locator_value": "p1:l6",
+        "source_snippet": "USD 100.00"
+      }
+    },
+    {
+      "trace_id": "tr_pkg_9001_cash_and_equivalents",
+      "concept_id": "cash_and_equivalents",
+      "period_end_date": "2026-01-31",
+      "raw_value_text": "$100.00",
+      "normalized_value": 100.0,
+      "unit_currency": "USD",
+      "expected_status": "verified",
+      "labeler_confidence": 0.99,
+      "flags": [],
+      "normalization": {
+        "raw_scale": "absolute",
+        "normalized_scale": "absolute",
+        "currency_conversion_applied": false
+      },
+      "evidence": {
+        "doc_id": "file_9001_01",
+        "doc_name": "ci_gate_package.pdf",
+        "page_or_sheet": "Page 1",
+        "locator_type": "paragraph",
+        "locator_value": "p1:l7",
+        "source_snippet": "USD 100.00"
+      }
+    },
+    {
+      "trace_id": "tr_pkg_9001_accounts_receivable_total",
+      "concept_id": "accounts_receivable_total",
+      "period_end_date": "2026-01-31",
+      "raw_value_text": "$100.00",
+      "normalized_value": 100.0,
+      "unit_currency": "USD",
+      "expected_status": "verified",
+      "labeler_confidence": 0.99,
+      "flags": [],
+      "normalization": {
+        "raw_scale": "absolute",
+        "normalized_scale": "absolute",
+        "currency_conversion_applied": false
+      },
+      "evidence": {
+        "doc_id": "file_9001_01",
+        "doc_name": "ci_gate_package.pdf",
+        "page_or_sheet": "Page 1",
+        "locator_type": "paragraph",
+        "locator_value": "p1:l8",
+        "source_snippet": "USD 100.00"
+      }
+    },
+    {
+      "trace_id": "tr_pkg_9001_inventory_total",
+      "concept_id": "inventory_total",
+      "period_end_date": "2026-01-31",
+      "raw_value_text": "$100.00",
+      "normalized_value": 100.0,
+      "unit_currency": "USD",
+      "expected_status": "verified",
+      "labeler_confidence": 0.99,
+      "flags": [],
+      "normalization": {
+        "raw_scale": "absolute",
+        "normalized_scale": "absolute",
+        "currency_conversion_applied": false
+      },
+      "evidence": {
+        "doc_id": "file_9001_01",
+        "doc_name": "ci_gate_package.pdf",
+        "page_or_sheet": "Page 1",
+        "locator_type": "paragraph",
+        "locator_value": "p1:l9",
+        "source_snippet": "USD 100.00"
+      }
+    },
+    {
+      "trace_id": "tr_pkg_9001_accounts_payable_total",
+      "concept_id": "accounts_payable_total",
+      "period_end_date": "2026-01-31",
+      "raw_value_text": "$100.00",
+      "normalized_value": 100.0,
+      "unit_currency": "USD",
+      "expected_status": "verified",
+      "labeler_confidence": 0.99,
+      "flags": [],
+      "normalization": {
+        "raw_scale": "absolute",
+        "normalized_scale": "absolute",
+        "currency_conversion_applied": false
+      },
+      "evidence": {
+        "doc_id": "file_9001_01",
+        "doc_name": "ci_gate_package.pdf",
+        "page_or_sheet": "Page 1",
+        "locator_type": "paragraph",
+        "locator_value": "p1:l10",
+        "source_snippet": "USD 100.00"
+      }
+    },
+    {
+      "trace_id": "tr_pkg_9001_total_debt",
+      "concept_id": "total_debt",
+      "period_end_date": "2026-01-31",
+      "raw_value_text": "$100.00",
+      "normalized_value": 100.0,
+      "unit_currency": "USD",
+      "expected_status": "verified",
+      "labeler_confidence": 0.99,
+      "flags": [],
+      "normalization": {
+        "raw_scale": "absolute",
+        "normalized_scale": "absolute",
+        "currency_conversion_applied": false
+      },
+      "evidence": {
+        "doc_id": "file_9001_01",
+        "doc_name": "ci_gate_package.pdf",
+        "page_or_sheet": "Page 1",
+        "locator_type": "paragraph",
+        "locator_value": "p1:l11",
+        "source_snippet": "USD 100.00"
+      }
+    },
+    {
+      "trace_id": "tr_pkg_9001_total_assets",
+      "concept_id": "total_assets",
+      "period_end_date": "2026-01-31",
+      "raw_value_text": "$100.00",
+      "normalized_value": 100.0,
+      "unit_currency": "USD",
+      "expected_status": "verified",
+      "labeler_confidence": 0.99,
+      "flags": [],
+      "normalization": {
+        "raw_scale": "absolute",
+        "normalized_scale": "absolute",
+        "currency_conversion_applied": false
+      },
+      "evidence": {
+        "doc_id": "file_9001_01",
+        "doc_name": "ci_gate_package.pdf",
+        "page_or_sheet": "Page 1",
+        "locator_type": "paragraph",
+        "locator_value": "p1:l12",
+        "source_snippet": "USD 100.00"
+      }
+    },
+    {
+      "trace_id": "tr_pkg_9001_total_liabilities",
+      "concept_id": "total_liabilities",
+      "period_end_date": "2026-01-31",
+      "raw_value_text": "$100.00",
+      "normalized_value": 100.0,
+      "unit_currency": "USD",
+      "expected_status": "verified",
+      "labeler_confidence": 0.99,
+      "flags": [],
+      "normalization": {
+        "raw_scale": "absolute",
+        "normalized_scale": "absolute",
+        "currency_conversion_applied": false
+      },
+      "evidence": {
+        "doc_id": "file_9001_01",
+        "doc_name": "ci_gate_package.pdf",
+        "page_or_sheet": "Page 1",
+        "locator_type": "paragraph",
+        "locator_value": "p1:l13",
+        "source_snippet": "USD 100.00"
+      }
+    }
+  ]
+}

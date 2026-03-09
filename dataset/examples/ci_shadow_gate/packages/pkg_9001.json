@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "package_id": "pkg_9001",
+  "deal_id": "deal_ci_gate",
+  "period_end_date": "2026-01-31",
+  "source_email_id": "email_9001",
+  "received_at": "2026-03-06T12:00:00+00:00",
+  "files": [
+    {
+      "file_id": "file_9001_01",
+      "source_id": "src_9001",
+      "doc_type": "PDF",
+      "filename": "ci_gate_package.pdf",
+      "storage_uri": "s3://ci-gate-samples/pkg_9001/ci_gate_package.pdf",
+      "checksum": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "pages_or_sheets": 1
+    }
+  ],
+  "source_ids": [
+    "src_9001"
+  ],
+  "variant_tags": [
+    "ci_gate"
+  ],
+  "quality_flags": [],
+  "labeling_workflow": {
+    "primary_labeler_status": "completed",
+    "reviewer_status": "completed",
+    "adjudication_status": "not_required"
+  },
+  "notes": "CI shadow gate fixture."
+}

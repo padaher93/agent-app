@@ -102,3 +102,21 @@ def test_critical_concept_floor_and_regression_rules(tmp_path: Path) -> None:
     assert "verified_precision_regression" in result.failures
     assert "evidence_link_accuracy_regression" in result.failures
     assert result.regressions["blocked"] is True
+
+
+def test_blocking_security_incident_forces_gate_fail(tmp_path: Path) -> None:
+    gt_dir = tmp_path / "gt_incident"
+    gt_dir.mkdir(parents=True, exist_ok=True)
+    pred_file = tmp_path / "predictions_incident.json"
+
+    _write_ground_truth(gt_dir / "pkg_9999.ground_truth.json")
+    _write_predictions(pred_file)
+
+    result = evaluate(
+        ground_truth_dir=gt_dir,
+        predictions_file=pred_file,
+        blocking_incident=True,
+    )
+
+    assert result.gate_pass is False
+    assert "security_data_integrity_incident" in result.failures

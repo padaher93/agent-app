@@ -39,6 +39,11 @@ Rules:
 | 2026-03-06 | D-0028 | Real borrower shadow data is isolated under dedicated `real_shadow_test` partition and evaluated separately. | Locked | Product + Applied AI | Prevents proxy/real contamination |
 | 2026-03-06 | D-0029 | Inbound gateway endpoint is accepted ingress path for provider webhooks into internal ingest/process APIs. | Locked | Platform | Email-only ingestion path hardening |
 | 2026-03-06 | D-0030 | Quality gate evaluation enforces critical-concept precision floor and regression blocking rules. | Locked | Product + Applied AI | Completes V1 gate policy implementation |
+| 2026-03-06 | D-0031 | User row corrections are append-only trace resolutions; base extraction rows remain immutable. | Locked | Product + Platform | Closes historical immutability gap |
+| 2026-03-06 | D-0032 | Tenant scoping is enforced by `workspace_id`; read/write APIs require workspace match. | Locked | Product + Platform | Workspace isolation for internal API |
+| 2026-03-06 | D-0033 | Internal API supports shared-token auth, HTTPS enforcement, and optional at-rest payload encryption key mode. | Locked | Platform | Security hardening for V1 operations |
+| 2026-03-06 | D-0034 | Release gate supports explicit security/data-integrity incident blocking independent of metric pass. | Locked | Product + Applied AI | Implements quality-gate incident block rule |
+| 2026-03-06 | D-0035 | Evidence UX shows sheet-level XLSX viewport and surfaces exact decision event for selected trace. | Locked | Product + Frontend | Closes viewer/log fidelity gap |
 
 ## Proposed Defaults Pending Explicit Revision
 These defaults are active unless superseded by a newer decision row.

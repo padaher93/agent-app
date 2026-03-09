@@ -28,3 +28,24 @@ def test_normalized_email_adapter_builds_ingest_payload() -> None:
     assert out["source_email_id"] == "email_abc"
     assert out["deal_id"] == "deal_abc"
     assert out["files"][0]["file_id"] == "file_01"
+
+
+def test_normalized_email_adapter_derives_sender_scoped_deal_id_when_missing() -> None:
+    payload = {
+        "from": "Ops.Team+credit@Borrower.com",
+        "message_id": "email_derived_001",
+        "attachments": [
+            {
+                "doc_type": "PDF",
+                "filename": "report.pdf",
+                "storage_uri": "s3://x/report.pdf",
+                "checksum": "deadbeef",
+                "pages_or_sheets": 1,
+            }
+        ],
+    }
+
+    out = normalized_email_to_ingest_request(payload)
+    assert out["sender_email"] == "ops.team+credit@borrower.com"
+    assert out["deal_id"].startswith("deal_ops_team_credit_")
+    assert out["deal_id"] != "deal_inbound"

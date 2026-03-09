@@ -1,0 +1,45 @@
+{
+  "dataset_version": "real_shadow_test",
+  "failure_taxonomy": [],
+  "failures": [
+    "unresolved_rate"
+  ],
+  "gate_pass": false,
+  "generated_at": "2026-03-06T20:46:12.667992+00:00",
+  "incident_status": {
+    "blocking": false,
+    "summary": "No incident file provided"
+  },
+  "metrics": {
+    "evidence_link_accuracy": 1.0,
+    "false_verified_rate": 0.0,
+    "package_completion_rate": 1.0,
+    "unresolved_rate": 0.18333333333333332,
+    "verified_precision": 1.0
+  },
+  "per_concept_verified_precision": {
+    "accounts_payable_total": 1.0,
+    "accounts_receivable_total": 1.0,
+    "ebitda_adjusted": 1.0,
+    "ebitda_reported": 1.0,
+    "interest_expense": 1.0,
+    "inventory_total": 1.0,
+    "operating_income_ebit": 1.0,
+    "revenue_total": 1.0,
+    "total_assets": 1.0,
+    "total_debt": 1.0,
+    "total_liabilities": 1.0
+  },
+  "pipeline_version": "ci_rc_preflight_local",
+  "regressions": {
+    "blocked": false,
+    "evidence_link_accuracy_delta": 0.0,
+    "verified_precision_delta": 0.0
+  },
+  "row_counts": {
+    "evidence_rows": 780,
+    "packages": 60,
+    "total_rows": 780,
+    "verified_rows": 555
+  }
+}
